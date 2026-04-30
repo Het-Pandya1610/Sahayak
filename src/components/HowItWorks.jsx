@@ -30,8 +30,8 @@ const HowItWorks = () => {
                 <p>No complex forms. No misinformation. Straightforward guidance.</p>
             </div>
             <div className="steps-container">
-                {steps.map((step, idx) => (
-                    <div key={idx} className="step" data-aos="fade-up" data-aos-delay={step.delay}>
+                {steps.map((step) => (
+                    <div key={step.title} className="step pop-in" data-aos="fade-up" data-aos-delay={step.delay}>
                         <div className="step-icon"><i className={`fas ${step.icon}`}></i></div>
                         <h4>{step.title}</h4>
                         <p>{step.desc}</p>

@@ -51,16 +51,14 @@ const SchemesGrid = ({ onSchemeClick }) => {
             <div className="section-header" data-aos="fade-up">
                 <span className="tag">Popular Schemes</span>
                 <h2>Explore Key Government Initiatives</h2>
-                <p>Click any card or ask our chatbot for personalized guidance.</p>
             </div>
             
             <div className="schemes-grid">
-                {schemes.map((scheme, idx) => (
+                {schemes.map((scheme) => (
                     <div 
-                        key={idx}
-                        className="scheme-card" 
+                        key={scheme.title}
+                        className="scheme-card pop-in" 
                         data-aos="zoom-in-up" 
-                        data-aos-delay={idx * 50}
                         onClick={() => onSchemeClick(scheme.title)}
                     >
                         <div className={`card-icon ${scheme.color}`}>
@@ -68,8 +66,10 @@ const SchemesGrid = ({ onSchemeClick }) => {
                         </div>
                         <h3>{scheme.title}</h3>
                         <p>{scheme.desc}</p>
-                        <span className="card-badge">{scheme.badge}</span>
-                        <span className="card-link">Learn More <i className="fas fa-arrow-right"></i></span>
+                        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <span className="card-badge">{scheme.badge}</span>
+                            <span className="card-link">Learn More <i className="fas fa-arrow-right"></i></span>
+                        </div>
                     </div>
                 ))}
             </div>

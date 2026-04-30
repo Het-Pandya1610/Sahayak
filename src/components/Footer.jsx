@@ -1,12 +1,15 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = ({ theme }) => {
     return (
         <footer className="footer" id="contact">
             <div className="footer-grid">
                 <div className="footer-col">
                     <div className="footer-brand">
-                        <img src="/emblem_logo.png" alt="Emblem" />
+                        <img 
+                            src={theme === 'dark' ? "/emblem_logo_dark.png" : "/emblem_logo.png"} 
+                            alt="Sahayak Logo" 
+                        />
                         <span>Sahayak</span>
                     </div>
                     <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>

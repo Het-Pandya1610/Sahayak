@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const Hero = ({ onSearch, showContent }) => {
+    const [inputValue, setInputValue] = useState('');
+
     const handleSearch = (e) => {
         if (e.key === 'Enter' || e.type === 'click') {
-            const input = document.getElementById('heroSearchInput');
-            if (input.value.trim()) {
-                onSearch(input.value.trim());
+            if (inputValue.trim()) {
+                onSearch(inputValue.trim());
             }
+        }
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.4
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
         }
     };
 
@@ -16,29 +37,36 @@ const Hero = ({ onSearch, showContent }) => {
             <div className="hero-container">
                 <motion.div 
                     className="hero-text"
-                    initial={{ opacity: 0, x: -100 }}
-                    animate={showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate={showContent ? "visible" : "hidden"}
                 >
-                    <div className="hero-badge">
+                    <motion.div className="hero-badge" variants={itemVariants}>
                         <span className="dot"></span> Officially Verified Information
-                    </div>
-                    <h1>Find Every Government Scheme in One Place</h1>
-                    <p>Stop misinformation. Our AI chatbot provides accurate, verified scheme details — in simple language.</p>
+                    </motion.div>
                     
-                    <div className="hero-search">
+                    <motion.h1 variants={itemVariants}>
+                        Find Every Government <span className="highlight">Scheme</span> in One Place
+                    </motion.h1>
+                    
+                    <motion.p variants={itemVariants}>
+                        Stop misinformation. Our AI chatbot provides accurate, verified scheme details — in simple language.
+                    </motion.p>
+                    
+                    <motion.div className="hero-search" variants={itemVariants}>
                         <input 
                             type="text" 
                             placeholder="e.g., housing, farmer benefits..." 
-                            id="heroSearchInput"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
                             onKeyPress={handleSearch}
                         />
                         <button onClick={handleSearch} className="search-btn">
                             <i className="fas fa-search"></i> Search
                         </button>
-                    </div>
+                    </motion.div>
 
-                    <div className="hero-stats">
+                    <motion.div className="hero-stats" variants={itemVariants}>
                         <div className="hero-stat">
                             <span className="stat-number"><i className="fas fa-check-circle"></i> 200+</span>
                             <span className="stat-label">Active Schemes</span>
@@ -51,14 +79,14 @@ const Hero = ({ onSearch, showContent }) => {
                             <span className="stat-number"><i className="fas fa-headset"></i> 24/7</span>
                             <span className="stat-label">AI Assistance</span>
                         </div>
-                    </div>
+                    </motion.div>
                 </motion.div>
 
                 <motion.div 
                     className="hero-illustration"
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={showContent ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
+                    initial={{ opacity: 0, x: 40, scale: 0.9 }}
+                    animate={showContent ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 40, scale: 0.9 }}
+                    transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <svg viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -74,7 +102,7 @@ const Hero = ({ onSearch, showContent }) => {
                         <rect x="170" y="186" width="250" height="10" rx="5" fill="#E2E8F0" />
                         <rect x="170" y="204" width="200" height="10" rx="5" fill="#E2E8F0" />
                         <rect x="170" y="235" width="120" height="12" rx="6" fill="#CBD5E1" />
-                        <circle cx="380" cy="280" r="28" fill="#C2A56D" />
+                        <circle cx="380" cy="280" r="28" fill="var(--secondary)" />
                         <path d="M368 280 L378 290 L395 270" stroke="white" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </motion.div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Chatbot = ({ isOpen, onClose, initialQuery }) => {
     const [messages, setMessages] = useState([
@@ -11,6 +12,7 @@ const Chatbot = ({ isOpen, onClose, initialQuery }) => {
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
+    const handledQueryRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -21,8 +23,9 @@ const Chatbot = ({ isOpen, onClose, initialQuery }) => {
     }, [messages, isTyping]);
 
     useEffect(() => {
-        if (initialQuery && isOpen) {
+        if (initialQuery && isOpen && handledQueryRef.current !== initialQuery) {
             handleSendMessage(initialQuery);
+            handledQueryRef.current = initialQuery;
         }
     }, [initialQuery, isOpen]);
 
@@ -58,62 +61,92 @@ const Chatbot = ({ isOpen, onClose, initialQuery }) => {
         }, 1000 + Math.random() * 500);
     };
 
-    if (!isOpen) return (
-        <div className="chatbot-widget">
-            <button className="chatbot-toggle" onClick={() => onClose(false)}>
-                <i className="fas fa-robot"></i>
-                <span className="pulse-ring"></span>
-            </button>
-        </div>
-    );
-
     return (
-        <div className="chatbot-panel-container">
-            <div className="chatbot-panel open">
-                <div className="chatbot-header">
-                    <div className="chatbot-header-left">
-                        <div className="chatbot-avatar"><i className="fas fa-robot"></i></div>
-                        <div>
-                            <h3>Sahayak AI</h3>
-                            <span className="status"><span className="status-dot"></span> Online · Verified Info</span>
-                        </div>
-                    </div>
-                    <button className="chatbot-close" onClick={() => onClose(true)}><i className="fas fa-times"></i></button>
-                </div>
+        <div className="chatbot-wrapper">
+            <AnimatePresence>
+                {!isOpen && (
+                    <motion.div 
+                        className="chatbot-widget"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                    >
+                        <button className="chatbot-toggle hover-glow" onClick={() => onClose()}>
+                            <i className="fas fa-robot"></i>
+                            <span className="pulse-ring"></span>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                <div className="chatbot-messages">
-                    {messages.map((msg, i) => (
-                        <div key={i} className={`msg ${msg.type}`}>
-                            {msg.type === 'bot' && <i className="fas fa-hand-sparkles" style={{ marginRight: '8px' }}></i>}
-                            <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
-                            {msg.chips && (
-                                <div className="suggestion-chips">
-                                    {msg.chips.map((chip, j) => (
-                                        <span key={j} className="chip" onClick={() => handleSendMessage(chip)}>{chip}</span>
-                                    ))}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        className="chatbot-panel-container"
+                        initial={{ y: 100, opacity: 0, scale: 0.9 }}
+                        animate={{ y: 0, opacity: 1, scale: 1 }}
+                        exit={{ y: 100, opacity: 0, scale: 0.9 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className="chatbot-panel">
+                            <div className="chatbot-header">
+                                <div className="chatbot-header-left">
+                                    <div className="chatbot-avatar"><i className="fas fa-robot"></i></div>
+                                    <div>
+                                        <h3>Sahayak AI</h3>
+                                        <span className="status"><span className="status-dot"></span> Online · Verified Info</span>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                    {isTyping && (
-                        <div className="typing-indicator">
-                            <span></span><span></span><span></span>
-                        </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
+                                <button className="chatbot-close" onClick={() => onClose()} aria-label="Close Chat">
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
 
-                <div className="chatbot-input-area">
-                    <input 
-                        type="text" 
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type your query..." 
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    />
-                    <button onClick={() => handleSendMessage()}><i className="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
+                            <div className="chatbot-messages">
+                                {messages.map((msg, i) => (
+                                    <motion.div 
+                                        key={i} 
+                                        className={`msg ${msg.type}`}
+                                        initial={{ opacity: 0, x: msg.type === 'bot' ? -10 : 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        {msg.type === 'bot' && <i className="fas fa-hand-sparkles" style={{ marginRight: '8px', color: 'var(--secondary)' }}></i>}
+                                        <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
+                                        {msg.chips && (
+                                            <div className="suggestion-chips">
+                                                {msg.chips.map((chip, j) => (
+                                                    <span key={j} className="chip" onClick={() => handleSendMessage(chip)}>{chip}</span>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))}
+                                {isTyping && (
+                                    <div className="typing-indicator">
+                                        <span></span><span></span><span></span>
+                                    </div>
+                                )}
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            <div className="chatbot-input-area">
+                                <input 
+                                    type="text" 
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Type your query..." 
+                                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                />
+                                <button onClick={() => handleSendMessage()} aria-label="Send Message">
+                                    <i className="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
