@@ -1054,3 +1054,60 @@ body {
 .hover-glow:hover {
     box-shadow: 0 0 20px var(--lotus-glow);
 }
+
+@media (max-width: 786px) {
+    .lotus-video{
+        width: 100%;
+        height: 50%;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    .hero-text {
+        flex: 1;
+        font: 1rem var(--font-sans);
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-search input{
+        font-size: 0.7rem;
+    }
+
+    .logo-icon{
+        width: 32px;
+        height: 32px;
+        margin-left: -40px;
+    }
+}
+
+@media (max-width: 720px){
+    .hero-illustration{
+        display: none;
+    }
+}
+
+@media (max-width: 976px){
+    .lotus-video{
+        height: 70%;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    .nav-links.desktop-only {
+        display: none !important;
+    }
+
+    .mobile-nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .hamburger {
+        display: flex;
+        margin-right: -40px;
+    }
+}
