@@ -1,0 +1,63 @@
+.contact-content {
+    padding: 4rem 2rem;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-content h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-top: -2rem;
+    color: var(--primary);
+    letter-spacing: -0.8px;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.contact-description {
+    font-size: 1.2rem;
+    color: var(--gray-700);
+    margin: 0 auto 2.5rem auto;
+}
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.contact-list li {
+    font-size: 1.2rem;
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+}
+
+.contact-list a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.social-media-list {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.social-media-list li {
+    list-style: none;
+}
+
+.social-media-list i{
+    color: var(--primary);
+    margin-right: 10px;
+    font-size: 2.5rem;
+}
+
+.social-media-list a {
+    color: var(--gray-700);
+    font-size: 1.5rem;
+    text-decoration: none;
+}

@@ -274,7 +274,6 @@ body {
 .nav-links a:hover {
     color: var(--primary);
     background: var(--lotus-glow);
-    backdrop-filter: blur(8px);
 }
 
 .nav-cta {
@@ -288,9 +287,8 @@ body {
 }
 
 .nav-cta:hover {
-    background: var(--primary-light);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    color: var(--white) !important;
+    background: var(--primary) !important;
 }
 
 .hamburger {
