@@ -664,7 +664,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: color-mix(in srgb, var(--primary-mist) 72%, white);
+    background: var(--white);
     color: var(--primary);
     padding: 14px 34px;
     margin-top: 20px;
@@ -766,7 +766,7 @@ body {
         right: 0;
         width: 300px;
         height: 100vh;
-        background: var(--nav-bg);
+        background: var(--white);
         backdrop-filter: blur(25px) saturate(180%);
         -webkit-backdrop-filter: blur(25px) saturate(180%);
         padding: 6rem 2rem;

@@ -18,7 +18,7 @@ const Navbar = ({ theme, toggleTheme }) => {
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-            <a href="#" className="nav-brand">
+            <a href="/" className="nav-brand">
                 <div className="logo-icon">
                     <img 
                         src={theme === 'dark' ? "/emblem_logo_dark.png" : "/emblem_logo.png"} 
@@ -30,11 +30,12 @@ const Navbar = ({ theme, toggleTheme }) => {
 
             {/* Desktop Links */}
             <ul className="nav-links desktop-only">
-                <li><a href="#schemes">Schemes</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="/schemes">Schemes</a></li>
+                <li><a href="/#how-it-works">How It Works</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/#contact">Contact</a></li>
                 <li>
-                    <a href="#schemes" className="nav-cta">
+                    <a href="/schemes" className="nav-cta">
                         <i className="fas fa-search" style={{ marginRight: '8px' }}></i> Explore
                     </a>
                 </li>
@@ -91,12 +92,12 @@ const Navbar = ({ theme, toggleTheme }) => {
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                     >
                         <ul className="mobile-nav-links">
-                            <li><a href="#schemes" onClick={closeMobileMenu}>Schemes</a></li>
-                            <li><a href="#how-it-works" onClick={closeMobileMenu}>How It Works</a></li>
-                            <li><a href="#about" onClick={closeMobileMenu}>About</a></li>
-                            <li><a href="#contact" onClick={closeMobileMenu}>Contact</a></li>
+                            <li><a href="/schemes" onClick={closeMobileMenu}>Schemes</a></li>
+                            <li><a href="/#how-it-works" onClick={closeMobileMenu}>How It Works</a></li>
+                            <li><a href="/about" onClick={closeMobileMenu}>About</a></li>
+                            <li><a href="/#contact" onClick={closeMobileMenu}>Contact</a></li>
                             <li>
-                                <a href="#schemes" className="nav-cta" onClick={closeMobileMenu}>
+                                <a href="/schemes" className="nav-cta" onClick={closeMobileMenu}>
                                     Explore Schemes
                                 </a>
                             </li>
