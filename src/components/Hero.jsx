@@ -41,9 +41,6 @@ const Hero = ({ onSearch, showContent }) => {
                     initial="hidden"
                     animate={showContent ? "visible" : "hidden"}
                 >
-                    <motion.div className="hero-badge" variants={itemVariants}>
-                        <span className="dot"></span> Officially Verified Information
-                    </motion.div>
                     
                     <motion.h1 variants={itemVariants}>
                         Find Every Government <span className="highlight">Scheme</span> in One Place

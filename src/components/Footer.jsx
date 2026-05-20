@@ -12,7 +12,7 @@ const Footer = ({ theme }) => {
                         />
                         <span>Sahayak</span>
                     </div>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--white)' }}>
                         Your trusted companion for navigating government schemes. Verified info, zero misinformation.
                     </p>
                 </div>
@@ -36,7 +36,7 @@ const Footer = ({ theme }) => {
                 </div>
                 <div className="footer-col">
                     <h4>Disclaimer</h4>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)' }}>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--white)' }}>
                         We source data from official portals. Always verify before applying.
                     </p>
                 </div>
