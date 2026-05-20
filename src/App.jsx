@@ -151,6 +151,7 @@ function App() {
 
       <Chatbot
         isOpen={isChatbotOpen}
+        onOpen={openChatbot}
         onClose={closeChatbot}
         initialQuery={chatbotQuery}
       />

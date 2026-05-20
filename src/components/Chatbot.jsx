@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Chatbot = ({ isOpen, onClose, initialQuery }) => {
+const Chatbot = ({ isOpen, onOpen, onClose, initialQuery }) => {
     const [messages, setMessages] = useState([
         {
             type: 'bot',
@@ -72,7 +72,7 @@ const Chatbot = ({ isOpen, onClose, initialQuery }) => {
                         exit={{ scale: 0, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
                     >
-                        <button className="chatbot-toggle hover-glow" onClick={() => onClose()}>
+                        <button className="chatbot-toggle hover-glow" onClick={() => onOpen()}>
                             <i className="fas fa-robot"></i>
                             <span className="pulse-ring"></span>
                         </button>
