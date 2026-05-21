@@ -5,13 +5,13 @@ const Footer = ({ theme }) => {
         <footer className="footer" id="contact">
             <div className="footer-grid">
                 <div className="footer-col">
-                    <div className="footer-brand">
+                    <a className="footer-brand" href="/">
                         <img 
                             src={theme === 'dark' ? "/emblem_logo_dark.png" : "/emblem_logo.png"} 
                             alt="Sahayak Logo" 
                         />
                         <span>Sahayak</span>
-                    </div>
+                    </a>
                     <p style={{ fontSize: '0.85rem', color: 'var(--white)' }}>
                         Your trusted companion for navigating government schemes. Verified info, zero misinformation.
                     </p>
@@ -19,16 +19,16 @@ const Footer = ({ theme }) => {
                 <div className="footer-col">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="#schemes">All Schemes</a></li>
+                        <li><a href="/schemes">All Schemes</a></li>
                         <li><a href="#">Chatbot Guide</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Official Sources</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/resources">Official Sources</a></li>
                     </ul>
                 </div>
                 <div className="footer-col">
                     <h4>Support</h4>
                     <ul>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                         <li><a href="#">Report Misinformation</a></li>
                         <li><a href="#">Feedback</a></li>
                         <li><a href="#">Privacy Policy</a></li>

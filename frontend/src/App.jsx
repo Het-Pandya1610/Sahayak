@@ -4,6 +4,10 @@ import Home from "./pages/Home";
 import Schemes from "./pages/Schemes";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import Resources from "./pages/Resources";
+
+import './index.css';
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +16,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/schemes" element={<Schemes />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/resources" element={<Resources />} />
       </Routes>
     </BrowserRouter>
   );

@@ -31,25 +31,21 @@ function Contact() {
                 transition={{ duration: 0.5, ease: 'easeOut' }}
             >
             <h1>Contact Us</h1>
-                <p className="contact-description">If you have any questions, feedback, or inquiries about Sahayak, please feel free to reach out to us. We value your input and are here to assist you in any way we can.</p>
-                <p className="contact-description">You can contact us through the following channels:</p>
-                <ul className="contact-list">
-                    <li><strong>Email:</strong> <a href="mailto:info@sahayak.org">info@sahayak.org</a></li>
-                    <li><strong>Phone:</strong> <a href="tel:+91-11-23456789">+91-11-23456789</a></li>
-                    <li><strong>Address:</strong> 123 Main Street, Anytown, USA</li>
-                </ul>
-                <p className="contact-description">We also encourage you to connect with us on our social media platforms for updates, news, and more information about Sahayak:</p>
-                <ul className="social-media-list">
-                    <li><a href="https://www.facebook.com/sahayak" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a></li>
-                    <li><a href="https://www.twitter.com/sahayak" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="https://www.linkedin.com/company/sahayak" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a></li>
-                    <li><a href="https://www.instagram.com/sahayak" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a></li>
-                </ul>
-                <p className="contact-description">For media inquiries, partnership opportunities, or any other specific requests, please use the contact information provided above, and we will get back to you as soon as possible.</p>
-                <p className="contact-description">Thank you for your interest in Sahayak. We look forward to hearing from you and assisting you with any questions or concerns you may have about our services.</p>
-                <p className="contact-description">Your feedback is invaluable to us as we strive to improve our chatbot and provide the best experience for our users. Please don't hesitate to reach out to us with your thoughts and suggestions.</p>
-                <p className="contact-description">We are committed to providing excellent customer support and ensuring that your experience with Sahayak is positive and helpful. Whether you have a question about how to use the chatbot, need assistance with a specific issue, or simply want to share your thoughts, we are here to listen and assist you.</p>
-                <p className="contact-description">We look forward to hearing from you and assisting you with any questions or concerns you may have about Sahayak. Your feedback is invaluable to us as we strive to improve our services and provide the best experience for our users.</p>
+            <p className="contact-description">
+                We would love to hear from you! Whether you have questions, feedback, or just want to say hello, feel free to reach out to us using the form below.
+            </p>
+            <form className="contact-form">
+                <label htmlFor="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name.." required />
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Your email.." required />
+                    <label htmlFor="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Write something.." required></textarea>
+                    <button type="submit">Submit</button>
+            </form>
+            <p className="contact-info">
+                You can also reach us at: <a href="mailto:info@sahayak.org">info@sahayak.org</a>
+            </p>
             </motion.div>
             <Footer theme={theme}/>
         </div>

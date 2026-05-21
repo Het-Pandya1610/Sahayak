@@ -11,6 +11,8 @@ import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 import Chatbot from '../components/Chatbot';
 
+import './Home.css';
+
 function Home() {
   const introOffsetSeconds = 0.28;
   const introPlaybackRate = 1.04;
@@ -37,7 +39,7 @@ function Home() {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const video = videoRef.current;
 
     if (!video) {
@@ -197,7 +199,7 @@ function Home() {
         );
     };
 
-    }, []);
+  }, []);
 
   useEffect(() => {
     AOS.init({
