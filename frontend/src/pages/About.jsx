@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-import './About.css';
+import './css/About.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 

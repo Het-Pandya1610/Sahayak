@@ -7,6 +7,8 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 import './index.css';
 function App() {
@@ -19,6 +21,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

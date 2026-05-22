@@ -101,6 +101,9 @@ const Chatbot = ({ isOpen, onOpen, onClose, initialQuery }) => {
                                 <button className="chatbot-close" onClick={() => onClose()} aria-label="Close Chat">
                                     <i className="fas fa-times"></i>
                                 </button>
+                                <button className="chatbot-maximize" onClick={() => window.open('/chatbot', '_blank')} aria-label="Open in new window">
+                                    <i className="fas fa-external-link-alt"></i>
+                                </button>
                             </div>
 
                             <div className="chatbot-messages">

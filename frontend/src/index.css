@@ -510,6 +510,17 @@ body {
     cursor: pointer;
 }
 
+.chatbot-maximize {
+    position: absolute;
+    margin-top: auto;
+    right: 60px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #fff7f4;
+    cursor: pointer;
+}
+
 .chatbot-header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #fff7f4;

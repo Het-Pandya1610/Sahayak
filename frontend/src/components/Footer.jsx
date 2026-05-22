@@ -31,7 +31,6 @@ const Footer = ({ theme }) => {
                         <li><a href="/contact">Contact Us</a></li>
                         <li><a href="#">Report Misinformation</a></li>
                         <li><a href="#">Feedback</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
                     </ul>
                 </div>
                 <div className="footer-col">

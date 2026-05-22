@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-import './Resources.css';
+import './css/Resources.css';
 
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -227,7 +227,7 @@ function Resources() {
 
                 </section>
 
-                <section className="resource-section">
+                <section className="resource-section txt-sctn">
                     <h2 className='ogr-hdr'>
                         Official Government Resources
                     </h2>
@@ -262,7 +262,7 @@ function Resources() {
                 {/* TRANSPARENCY */}
                 {/* ========================= */}
 
-                <section className="resource-section">
+                <section className="resource-section txt-sctn">
 
                     <h2>
                         Information Reliability

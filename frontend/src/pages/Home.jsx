@@ -11,7 +11,7 @@ import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 import Chatbot from '../components/Chatbot';
 
-import './Home.css';
+import './css/Home.css';
 
 function Home() {
   const introOffsetSeconds = 0.28;
