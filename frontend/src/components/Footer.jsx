@@ -42,7 +42,9 @@ const Footer = ({ theme }) => {
                 </div>
             </div>
             <div className="footer-bottom">
-                &copy; {new Date().getFullYear()} Sahayak. Made with <i className="fas fa-heart" style={{ color: '#e53e3e' }}></i> for the citizens of India.
+                &copy; {new Date().getFullYear()} Sahayak. All rights reserved.<br />
+                Developed by Team Sahayak.<br />
+                <a href="/terms" style={{ color: 'var(--white)', textDecoration: 'none' }}>Terms of Service</a> | <a href="/privacy" style={{ color: 'var(--white)', textDecoration: 'none' }}>Privacy Policy</a>
             </div>
         </footer>
     );

@@ -129,9 +129,11 @@ body {
     color: var(--gray-800);
     line-height: 1.6;
     overflow-x: hidden;
+    user-select: none;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.8s ease, color 0.8s ease;
 }
+
 
 /* Glassmorphism Utilities */
 .glass {
@@ -356,6 +358,7 @@ body {
     color: var(--white);
     text-decoration: none;
     font-size: 0.9rem;
+    transition: color var(--transition-smooth);
 }
 
 .footer-bottom {
@@ -393,6 +396,27 @@ body {
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
+        width: 22px;
+        font-size: 0.9rem;
+    }
+
+    .tbtn{
+        width: 36px;
+        height: 36px;
+    }
+    .nav-brand{
+        gap: 6px;
+        font-size: 1.2rem;
+    }
+
+    .nav-brand .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .nav-brand .logo-icon img {
+        width: 24px;
+        height: 24px;
     }
 
     .mobile-menu {

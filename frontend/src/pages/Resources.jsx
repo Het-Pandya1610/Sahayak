@@ -55,41 +55,10 @@ function Resources() {
                     ease: 'easeOut'
                 }}
             >
-
-                <h1>
-                    Trusted Government Resources
-                </h1>
-
-                <p className="resources-description">
-                    Sahayak utilizes verified government
-                    resources, official public service
-                    portals, and authentic informational
-                    platforms to ensure users receive
-                    accurate, reliable, and up-to-date
-                    guidance regarding government schemes,
-                    public welfare initiatives, complaint
-                    registration systems, healthcare
-                    programs, education support, and
-                    citizen services across India.
-                </p>
-
-                <p className="resources-description">
-                    Our platform is designed to simplify
-                    access to official information by
-                    connecting users directly with trusted
-                    government websites and digital
-                    service portals. This helps reduce
-                    misinformation, improves accessibility,
-                    and enables citizens to efficiently
-                    discover schemes, benefits, and
-                    grievance support systems relevant to
-                    their needs.
-                </p>
-
-                {/* ========================= */}
-                {/* OFFICIAL RESOURCES */}
-                {/* ========================= */}
-
+            <h1>
+                Trusted Government Resources
+            </h1>
+            <div className="resource-sections">
                 <section className="resource-section">
 
                     <h2>
@@ -258,6 +227,37 @@ function Resources() {
 
                 </section>
 
+                <section className="resource-section">
+                    <h2 className='ogr-hdr'>
+                        Official Government Resources
+                    </h2>
+                    <p className="resources-description ogr-desc">
+                        Sahayak utilizes verified government
+                        resources, official public service
+                        portals, and authentic informational
+                        platforms to ensure users receive
+                        accurate, reliable, and up-to-date
+                        guidance regarding government schemes,
+                        public welfare initiatives, complaint
+                        registration systems, healthcare
+                        programs, education support, and
+                        citizen services across India.
+                    </p>
+
+                    <p className="resources-description ogr-desc">
+                        Our platform is designed to simplify
+                        access to official information by
+                        connecting users directly with trusted
+                        government websites and digital
+                        service portals. This helps reduce
+                        misinformation, improves accessibility,
+                        and enables citizens to efficiently
+                        discover schemes, benefits, and
+                        grievance support systems relevant to
+                        their needs.
+                    </p>
+                </section>
+
                 {/* ========================= */}
                 {/* TRANSPARENCY */}
                 {/* ========================= */}
@@ -265,10 +265,10 @@ function Resources() {
                 <section className="resource-section">
 
                     <h2>
-                        Transparency & Information Reliability
+                        Information Reliability
                     </h2>
 
-                    <p className="resources-description">
+                    <p className="resources-description trn-desc">
                         Sahayak does not generate
                         unofficial scheme data or
                         fabricate public information.
@@ -281,7 +281,7 @@ function Resources() {
                         and accessibility.
                     </p>
 
-                    <p className="resources-description">
+                    <p className="resources-description trn-desc">
                         Users are always encouraged
                         to verify critical information
                         directly through official
@@ -292,7 +292,7 @@ function Resources() {
                     </p>
 
                 </section>
-
+            </div>
             </motion.div>
 
             <Footer theme={theme} />
