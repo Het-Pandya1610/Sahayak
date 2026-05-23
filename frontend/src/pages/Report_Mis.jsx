@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-import './css/Report_Miss.css';
+import './css/Report_Mis.css';
 
 import MainLayout from '../layouts/MainLayout';
 
@@ -33,4 +33,4 @@ function Report_Miss() {
     );
 }
 
-export default Report_Miss;
+export default Report_Mis;
