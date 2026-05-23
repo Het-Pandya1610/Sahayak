@@ -9,6 +9,7 @@ import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Report_Miss from "./pages/Report_Miss";
 
 import './index.css';
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/resources" element={<Resources />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/report-misinformation" element={<Report_Miss />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
