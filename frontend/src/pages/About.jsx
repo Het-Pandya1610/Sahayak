@@ -2,28 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 import './css/About.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import MainLayout from '../layouts/MainLayout';
 
 function About() {
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
 
     return (
         <div className="about-page">
-            <Navbar 
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
+            <MainLayout>
             <motion.div
             className="about-content"
             initial={{ opacity: 0, y: 20 }}
@@ -38,7 +23,7 @@ function About() {
                 <p className="about-description">At Sahayak, we believe that informed citizens are empowered citizens. Our goal is to bridge the gap between the government and the public by providing a reliable and efficient platform for accessing information about government schemes. We are continuously working to improve our chatbot and expand our database to cover more schemes and initiatives.</p>
                 <p className="about-description">Thank you for choosing Sahayak as your go-to resource for government scheme information. We are dedicated to helping you navigate the world of government initiatives and make the most of the opportunities available to you.</p>
             </motion.div>
-            <Footer theme={theme}/>
+            </MainLayout>
         </div>
     );
 };

@@ -3,43 +3,13 @@ import { motion } from 'framer-motion';
 
 import './css/Resources.css';
 
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import MainLayout from '../layouts/MainLayout';
 
 function Resources() {
-
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-
-    useEffect(() => {
-        document.documentElement.setAttribute(
-            'data-theme',
-            theme
-        );
-
-        localStorage.setItem(
-            'theme',
-            theme
-        );
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev =>
-            prev === 'light'
-                ? 'dark'
-                : 'light'
-        );
-    };
-
     return (
         <div className="resources-page">
 
-            <Navbar
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
-
+            <MainLayout>
             <motion.div
                 className="resources-content"
                 initial={{
@@ -295,7 +265,7 @@ function Resources() {
             </div>
             </motion.div>
 
-            <Footer theme={theme} />
+            </MainLayout>
 
         </div>
     );

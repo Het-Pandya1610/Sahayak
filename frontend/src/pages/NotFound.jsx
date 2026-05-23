@@ -5,31 +5,16 @@ import { Link } from 'react-router-dom';
 import './css/NotFound.css';
 
 // Add navbar and footer with themes
-
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+ 
+import MainLayout from '../layouts/MainLayout';
 
 function NotFound() {
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
 
     return (
         <div className="notfound-page">
-            <Navbar 
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
-            <motion.div
-                className="notfound-content"
+            <MainLayout>
+                <motion.div
+                    className="notfound-content"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -49,7 +34,7 @@ function NotFound() {
                 </Link>
 
             </motion.div>
-            <Footer theme={theme}/>
+            </MainLayout>
         </div>
     );
 }

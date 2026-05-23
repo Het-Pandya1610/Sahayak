@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 const Footer = ({ theme }) => {
     return (
@@ -19,18 +20,18 @@ const Footer = ({ theme }) => {
                 <div className="footer-col">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="/schemes">All Schemes</a></li>
-                        <li><a href="#">Chatbot Guide</a></li>
-                        <li><a href="/faq">FAQ</a></li>
-                        <li><a href="/resources">Official Sources</a></li>
+                        <li><Link to="/schemes">All Schemes</Link></li>
+                        <li><Link to="#">Chatbot Guide</Link></li>
+                        <li><Link to="/faq">FAQ</Link></li>
+                        <li><Link to="/resources">Official Sources</Link></li>
                     </ul>
                 </div>
                 <div className="footer-col">
                     <h4>Support</h4>
                     <ul>
-                        <li><a href="/contact">Contact Us</a></li>
-                        <li><a href="#">Report Misinformation</a></li>
-                        <li><a href="#">Feedback</a></li>
+                        <li><Link to="/contact">Contact Us</Link></li>
+                        <li><Link to="/report-misinformation">Report Misinformation</Link></li>
+                        <li><Link to="#">Feedback</Link></li>
                     </ul>
                 </div>
                 <div className="footer-col">
@@ -43,7 +44,7 @@ const Footer = ({ theme }) => {
             <div className="footer-bottom">
                 &copy; {new Date().getFullYear()} Sahayak. All rights reserved.<br />
                 Developed by Team Sahayak.<br />
-                <a href="/terms" style={{ color: 'var(--white)', textDecoration: 'none' }}>Terms of Service</a> | <a href="/privacy" style={{ color: 'var(--white)', textDecoration: 'none' }}>Privacy Policy</a>
+                <Link to="/terms" style={{ color: 'var(--white)', textDecoration: 'none' }}>Terms of Service</Link> | <Link to="/privacy" style={{ color: 'var(--white)', textDecoration: 'none' }}>Privacy Policy</Link>
             </div>
         </footer>
     );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {Link} from 'react-router-dom';
 
 const Navbar = ({ theme, toggleTheme }) => {
     const [scrolled, setScrolled] = useState(false);
@@ -18,7 +19,7 @@ const Navbar = ({ theme, toggleTheme }) => {
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-            <a href="/" className="nav-brand">
+            <Link to="/" className="nav-brand">
                 <div className="logo-icon">
                     <img 
                         src={theme === 'dark' ? "/emblem_logo_dark.png" : "/emblem_logo.png"} 
@@ -26,17 +27,17 @@ const Navbar = ({ theme, toggleTheme }) => {
                     />
                 </div>
                 <span>Sahayak</span>
-            </a>
+            </Link>
 
             {/* Desktop Links */}
             <ul className="nav-links desktop-only">
-                <li><a href="/schemes">Schemes</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/contact">Contact</a></li>
+                <li><Link to="/schemes">Schemes</Link></li>
+                <li><Link to="/about">About</Link></li>
+                <li><Link to="/contact">Contact</Link></li>
                 <li>
-                    <a href="/schemes" className="nav-cta">
+                    <Link to="/schemes" className="nav-cta">
                         <i className="fas fa-search" style={{ marginRight: '8px' }}></i> Explore
-                    </a>
+                    </Link>
                 </li>
             </ul>
 
@@ -91,13 +92,13 @@ const Navbar = ({ theme, toggleTheme }) => {
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                     >
                         <ul className="mobile-nav-links">
-                            <li><a href="/schemes" onClick={closeMobileMenu}>Schemes</a></li>
-                            <li><a href="/about" onClick={closeMobileMenu}>About</a></li>
-                            <li><a href="/contact" onClick={closeMobileMenu}>Contact</a></li>
+                            <li><Link to="/schemes" onClick={closeMobileMenu}>Schemes</Link></li>
+                            <li><Link to="/about" onClick={closeMobileMenu}>About</Link></li>
+                            <li><Link to="/contact" onClick={closeMobileMenu}>Contact</Link></li>
                             <li>
-                                <a href="/schemes" className="nav-cta" onClick={closeMobileMenu}>
+                                <Link to="/schemes" className="nav-cta" onClick={closeMobileMenu}>
                                     Explore Schemes
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </motion.div>

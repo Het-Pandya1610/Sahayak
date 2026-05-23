@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-import Navbar from '../components/Navbar';
+
 import Hero from '../components/Hero';
 import SchemesGrid from '../components/SchemesGrid';
 import HowItWorks from '../components/HowItWorks';
 import CTABanner from '../components/CTABanner';
-import Footer from '../components/Footer';
 import Chatbot from '../components/Chatbot';
+
+import MainLayout from '../layouts/MainLayout';
 
 import './css/Home.css';
 
@@ -24,20 +25,7 @@ function Home() {
   const [isBackgroundMode, setIsBackgroundMode] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
 
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem('theme') || 'light'
-  );
-
   const videoRef = useRef(null);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
 
   useEffect(() => {
     const video = videoRef.current;
@@ -264,10 +252,7 @@ function Home() {
           pointerEvents: showContent ? 'all' : 'none',
         }}
       >
-        <Navbar
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
+        <MainLayout>
 
         <main>
           <Hero
@@ -288,7 +273,7 @@ function Home() {
           />
         </main>
 
-        <Footer theme={theme} />
+        </MainLayout>
       </motion.div>
 
       <Chatbot

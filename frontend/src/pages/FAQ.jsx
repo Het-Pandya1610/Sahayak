@@ -2,21 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import './css/FAQ.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import MainLayout from '../layouts/MainLayout';
 
 function FAQ() {
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
     const [activeIndex, setActiveIndex] = useState(null);
 
     const toggleFAQ = (index) => {
@@ -48,69 +36,64 @@ function FAQ() {
 
     return (
         <div className="faq-page">
-            <Navbar 
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
+            <MainLayout>
+                <motion.div
+                    className="faq-content"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                >
+                    <h1>Frequently Asked Questions</h1>
 
-            <motion.div
-                className="faq-content"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-            >
-                <h1>Frequently Asked Questions</h1>
+                    <p className="faq-description">
+                        Here are some common questions about Sahayak. 
+                        If you have more, feel free to <a href="/contact">contact us</a>!
+                    </p>
 
-                <p className="faq-description">
-                    Here are some common questions about Sahayak. 
-                    If you have more, feel free to <a href="/contact">contact us</a>!
-                </p>
-
-                <div className="faq-container">
-                    {faqs.map((faq, index) => (
-                        <motion.div
-                            key={index}
-                            className={`faq-item ${activeIndex === index ? 'open' : ''}`}
-                            layout
-                            transition={{ duration: 0.3 }}
-                        >
-                            <div
-                                className="faq-question"
-                                onClick={() => toggleFAQ(index)}
+                    <div className="faq-container">
+                        {faqs.map((faq, index) => (
+                            <motion.div
+                                key={index}
+                                className={`faq-item ${activeIndex === index ? 'open' : ''}`}
+                                layout
+                                transition={{ duration: 0.3 }}
                             >
-                                <h3>{faq.question}</h3>
+                                <div
+                                    className="faq-question"
+                                    onClick={() => toggleFAQ(index)}
+                                >
+                                    <h3>{faq.question}</h3>
 
-                                <motion.i
-                                    className="fas fa-chevron-down"
-                                    animate={{
-                                        rotate: activeIndex === index ? 180 : 0
-                                    }}
-                                    transition={{ duration: 0.3 }}
-                                />
-                            </div>
-
-                            <AnimatePresence initial={false}>
-                                {activeIndex === index && (
-                                    <motion.div
-                                        className="faq-answer"
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: 'auto', opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{
-                                            duration: 0.35,
-                                            ease: 'easeInOut'
+                                    <motion.i
+                                        className="fas fa-chevron-down"
+                                        animate={{
+                                            rotate: activeIndex === index ? 180 : 0
                                         }}
-                                    >
-                                        <p>{faq.answer}</p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </motion.div>
-                    ))}
-                </div>
-            </motion.div>
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </div>
 
-            <Footer theme={theme}/>
+                                <AnimatePresence initial={false}>
+                                    {activeIndex === index && (
+                                        <motion.div
+                                            className="faq-answer"
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{
+                                                duration: 0.35,
+                                                ease: 'easeInOut'
+                                            }}
+                                        >
+                                            <p>{faq.answer}</p>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+                        ))}
+                    </div>
+                </motion.div>
+            </MainLayout>
         </div>
     );
 }

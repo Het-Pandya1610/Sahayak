@@ -3,31 +3,14 @@ import { motion } from 'framer-motion';
 
 import './css/Privacy.css';
 
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import MainLayout from '../layouts/MainLayout';
 
 function Privacy() {
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
-
     return (
         <div className="privacy-page">
-            <Navbar
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
-            <motion.div
-                className="privacy-content"
+            <MainLayout>
+                <motion.div
+                    className="privacy-content"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -58,7 +41,7 @@ function Privacy() {
                     <a href="mailto:info@company.com" className='mailto'>info@company.com</a>.
                 </p>
             </motion.div>
-            <Footer theme={theme} />
+            </MainLayout>
         </div>
     );
 }

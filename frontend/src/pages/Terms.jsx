@@ -3,31 +3,15 @@ import { motion } from 'framer-motion';
 
 import './css/Terms.css';
 
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import MainLayout from '../layouts/MainLayout';
 
 function Terms() {
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem('theme') || 'light'
-    );
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
 
     return (
         <div className="terms-page">
-            <Navbar
-                theme={theme}
-                toggleTheme={toggleTheme}
-            />
+            <MainLayout>
             <motion.div
-                className="terms-content"
+                    className="terms-content"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -62,7 +46,7 @@ function Terms() {
                     <a href="mailto:info@company.com" className='mailto'>info@company.com</a>.
                 </p>
             </motion.div>
-            <Footer theme={theme}/>
+            </MainLayout>
         </div>
     );
 }
