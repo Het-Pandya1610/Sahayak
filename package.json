@@ -1,1 +1,32 @@
-{}
+{
+  "name": "sahayak",
+  "version": "1.0.0",
+  "description": "Sahayak is an AI-powered citizen assistance chatbot designed to simplify common day-to-day issues faced by Indian citizens. It provides guided support for government services, municipal complaints, and welfare schemes through an interactive chatbot interface.",
+  "main": "index.js",
+  "scripts": {
+
+    "frontend":
+      "cd frontend && npm run dev",
+
+    "backend":
+      "cd backend && venv\\Scripts\\activate && python manage.py runserver",
+
+    "dev":
+      "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Het-Pandya1610/Sahayak.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Het-Pandya1610/Sahayak/issues"
+  },
+  "homepage": "https://github.com/Het-Pandya1610/Sahayak#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
