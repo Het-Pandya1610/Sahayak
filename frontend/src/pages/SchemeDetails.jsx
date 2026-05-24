@@ -159,14 +159,22 @@ function SchemeDetails() {
 
 
 
-                <div className="scheme-section">
+                <div className="scheme-section application-process">
 
                     <h2>
                         Application Process
                     </h2>
 
                     <p>
-                        {scheme.application}
+                        {scheme.application
+                            .split('.')
+                            .filter(step => step.trim() !== '')
+                            .map((step, index) => (
+                                <p key={index}>
+                                    {step.trim()}.
+                                </p>
+                            ))
+                        }
                     </p>
 
                 </div>

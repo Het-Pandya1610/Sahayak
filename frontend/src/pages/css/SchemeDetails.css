@@ -58,3 +58,9 @@
     max-width: 850px;
     line-height: 1.9;
 }
+
+.application-process p{
+    margin-bottom: 0.8rem;
+    margin-top: 0.8rem;
+    max-width: 100%;
+}
