@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Chatbot = ({ isOpen, onOpen, onClose, initialQuery }) => {
     const [messages, setMessages] = useState([
@@ -101,9 +102,9 @@ const Chatbot = ({ isOpen, onOpen, onClose, initialQuery }) => {
                                 <button className="chatbot-close" onClick={() => onClose()} aria-label="Close Chat">
                                     <i className="fas fa-times"></i>
                                 </button>
-                                <button className="chatbot-maximize" onClick={() => window.open('/chatbot', '_blank')} aria-label="Open in new window">
+                                <Link className="chatbot-maximize" to="/chatbot" target="_self" aria-label="Open Full Chatbot Page">
                                     <i className="fas fa-external-link-alt"></i>
-                                </button>
+                                </Link>
                             </div>
 
                             <div className="chatbot-messages">
