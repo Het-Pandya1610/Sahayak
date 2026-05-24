@@ -1,0 +1,249 @@
+.chatbot-content{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.chatbot-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 700px;
+}
+
+.chatbot-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.chatbot-avatar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.chatbot-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.chatbot-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.chatbot-messages-max {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.max-msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+}
+
+.max-msg.bot {
+    background: var(--panel-bg);
+    color: var(--gray-800);
+    align-self: flex-start;
+    border: 1px solid var(--gray-200);
+}
+
+.max-msg.user {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    align-self: flex-end;
+}
+
+.suggestion-chips-max {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.chip-max {
+    background: var(--accent);
+    color: var(--primary);
+    border: 1px solid var(--gray-200);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.typing-indicator-max {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.typing-indicator-max {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 2px;
+}
+
+.typing-indicator-max span {
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.95),
+            var(--secondary)
+        );
+
+    position: relative;
+
+    animation:
+        waveShine 1.5s infinite ease-in-out;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,0.25),
+        0 0 14px rgba(255,140,80,0.18);
+
+    overflow: hidden;
+}
+
+/* Shine Layer */
+
+.typing-indicator-max span::before {
+
+    content: '';
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent 0%,
+            rgba(255,255,255,0.9) 45%,
+            transparent 100%
+        );
+
+    transform: translateX(-120%);
+
+    animation:
+        shine 1.5s infinite;
+}
+
+/* Wave Delays */
+
+.typing-indicator-max span:nth-child(1) {
+
+    animation-delay: 0s;
+}
+
+.typing-indicator-max span:nth-child(2) {
+
+    animation-delay: 0.18s;
+}
+
+.typing-indicator-max span:nth-child(3) {
+
+    animation-delay: 0.36s;
+}
+
+/* ========================= */
+/* MAIN WAVE */
+/* ========================= */
+
+@keyframes waveShine {
+
+    0%,
+    80%,
+    100% {
+
+        transform:
+            translateY(0)
+            scale(1);
+
+        opacity: 0.65;
+    }
+
+    40% {
+
+        transform:
+            translateY(-9px)
+            scale(1.18);
+
+        opacity: 1;
+    }
+}
+
+/* ========================= */
+/* SHINE SWEEP */
+/* ========================= */
+
+@keyframes shine {
+
+    0% {
+
+        transform:
+            translateX(-140%);
+    }
+
+    100% {
+
+        transform:
+            translateX(140%);
+    }
+}
+
+.chatbot-input-area-max {
+    padding: 12px 16px;
+    border-top: 1px solid var(--gray-200);
+    background: var(--panel-bg);
+    display: flex;
+    gap: 8px;
+}
+
+.chatbot-input-area-max input {
+    flex: 1;
+    border: 1px solid var(--gray-300);
+    border-radius: 25px;
+    padding: 10px 16px;
+    outline: none;
+    background: var(--input-bg);
+    color: var(--gray-800);
+}
+
+.chatbot-input-area-max button {
+    background: var(--secondary);
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
