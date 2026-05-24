@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Optional npm cache directory
+.npm
+
+# django stuff:
+
+*.pyc
+__pycache__
+
+# dotenv environment variables file
+.env
+
+# virtual env
+venv
+
+# sqlite database
+db.sqlite3
