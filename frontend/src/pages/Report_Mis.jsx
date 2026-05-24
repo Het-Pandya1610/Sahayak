@@ -5,7 +5,7 @@ import './css/Report_Mis.css';
 
 import MainLayout from '../layouts/MainLayout';
 
-function Report_Miss() {
+function Report_Mis() {
 
     return (
         <div className="report-miss-page">
