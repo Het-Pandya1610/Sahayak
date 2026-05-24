@@ -12,6 +12,79 @@
     margin-bottom: 1rem;
 }
 
+/* Make it in center */
+
+.scheme-search-filter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.scheme-search-filter input{
+    display: block;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--lotus-border);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+    font-size: 1rem;
+    background: none;
+    transition: border-color var(--transition-theme);
+    width: 980px;
+}
+
+.scheme-search-filter input:focus{
+    border-color: var(--primary);
+    outline: none;
+}
+
+.scheme-search-filter input::placeholder{
+    color: var(--gray-500);
+}
+
+.scheme-search-filter select{
+    padding: 0.75rem 1rem;
+    width: 200px;
+    border: 1px solid var(--lotus-border);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+    font-size: 1rem;
+    background: none;
+    transition: border-color var(--transition-theme);
+}
+
+.scheme-search-filter select:focus{
+    border-color: var(--primary);
+    outline: none;
+}
+
+.scheme-search-filter select option{
+    background: var(--white);
+    color: var(--primary);
+}
+
+.loading-text{
+    font-size: 1.2rem;
+    color: var(--gray-700);
+    text-align: center;
+    margin-top: 2rem;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .schemes-description{
     font-size: 1.2rem;
     color: var(--gray-700);
@@ -53,6 +126,34 @@
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
     border-color: var(--secondary);
+}
+
+.pagination{
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.pagination button{
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--lotus-border);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition-theme), border-color var(--transition-theme);
+}
+
+.pagination span{
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--lotus-border);
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--white);
+    font-size: 1rem;
 }
 
 @media (max-width: 720px){
