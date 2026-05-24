@@ -237,7 +237,7 @@ function Home() {
           }`}
         ></div>
       </div>
-
+      <MainLayout>
       <motion.div
         className={`content-wrapper ${
           showContent ? 'is-visible' : ''
@@ -252,7 +252,6 @@ function Home() {
           pointerEvents: showContent ? 'all' : 'none',
         }}
       >
-        <MainLayout>
 
         <main>
           <Hero
@@ -272,16 +271,14 @@ function Home() {
             onOpenChatbot={() => openChatbot()}
           />
         </main>
-
-        </MainLayout>
       </motion.div>
-
       <Chatbot
         isOpen={isChatbotOpen}
         onOpen={openChatbot}
         onClose={closeChatbot}
         initialQuery={chatbotQuery}
       />
+      </MainLayout>
     </div>
   );
 }

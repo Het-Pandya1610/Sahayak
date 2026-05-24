@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {Link} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = ({ theme, toggleTheme }) => {
+    const isAuthenticated = false;
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -19,7 +21,7 @@ const Navbar = ({ theme, toggleTheme }) => {
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-            <Link to="/" className="nav-brand">
+            <NavLink to="/" className="nav-brand">
                 <div className="logo-icon">
                     <img 
                         src={theme === 'dark' ? "/emblem_logo_dark.png" : "/emblem_logo.png"} 
@@ -27,13 +29,14 @@ const Navbar = ({ theme, toggleTheme }) => {
                     />
                 </div>
                 <span>Sahayak</span>
-            </Link>
+            </NavLink>
 
             {/* Desktop Links */}
             <ul className="nav-links desktop-only">
-                <li><Link to="/schemes">Schemes</Link></li>
-                <li><Link to="/about">About</Link></li>
-                <li><Link to="/contact">Contact</Link></li>
+                <li><NavLink to="/schemes" className={({ isActive }) => isActive ? 'active' : ''}>Schemes</NavLink></li>
+                <li><NavLink to="/chatbot" className={({ isActive }) => isActive ? 'active' : ''}>Chatbot</NavLink></li>
+                <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink></li>
+                <li><NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>Contact</NavLink></li>
                 <li>
                     <Link to="/schemes" className="nav-cta">
                         <i className="fas fa-search" style={{ marginRight: '8px' }}></i> Explore
@@ -46,10 +49,10 @@ const Navbar = ({ theme, toggleTheme }) => {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={theme}
-                            initial={{ y: 10, opacity: 0, rotate: -45 }}
+                            initial={{ y: 0, opacity: 1, rotate: 0 }}
                             animate={{ y: 0, opacity: 1, rotate: 0 }}
                             exit={{ y: -10, opacity: 0, rotate: 45 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.5 }}
                         >
                             {theme === 'dark' ? (
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -71,7 +74,43 @@ const Navbar = ({ theme, toggleTheme }) => {
                         </motion.div>
                     </AnimatePresence>
                 </button>
+                {!isAuthenticated ? (
 
+                    <>
+                        <Link
+                            to="/register"
+                            className="register-btn"
+                        >
+                            Register
+                        </Link>
+
+                        <Link
+                            to="/login"
+                            className="login-btn"
+                        >
+                            Log In
+                        </Link>
+                    </>
+
+                ) : (
+                    <>
+                        <Link to="/profile">
+                            <button className="profile" aria-label="Profile">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </button>
+                        </Link>
+                        <button
+                            className="logout-btn"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    </>
+
+                )}
                 <button 
                     className={`hamburger ${mobileMenuOpen ? 'active' : ''}`} 
                     onClick={toggleMobileMenu}

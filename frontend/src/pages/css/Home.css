@@ -348,7 +348,7 @@
 
 .btn-white:hover {
     transform: translateY(-4px) scale(1.05);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0px 5px 25px var(--white);
     background: color-mix(in srgb, var(--secondary-light) 24%, white);
     color: var(--secondary);
 }
