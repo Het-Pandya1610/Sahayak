@@ -10,6 +10,8 @@ import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Report_Mis from "./pages/Report_Mis";
+import ChatbotPage from "./pages/ChatbotPage";
+import SchemeDetails from './pages/SchemeDetails';
 
 import './index.css';
 function App() {
@@ -25,6 +27,8 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/report-misinformation" element={<Report_Mis />} />
+        <Route path="/chatbot" element={<ChatbotPage />} />
+        <Route path="/schemes/:id" element={<SchemeDetails />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
