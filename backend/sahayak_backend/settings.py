@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'schemes',
+    'chatbot',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,10 @@ WSGI_APPLICATION = 'sahayak_backend.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 connect(
-    host=config('MONGO_URI')
+    host=config('MONGO_URI'),
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    serverSelectionTimeoutMS=5000
 )
 
 
