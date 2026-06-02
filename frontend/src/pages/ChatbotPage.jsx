@@ -15,6 +15,7 @@ const ChatbotPage = ({ initialQuery }) => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const handledQueryRef = useRef(null);
+  const [chatHistory, setChatHistory] = useState([]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,36 +32,140 @@ const ChatbotPage = ({ initialQuery }) => {
     }
   }, [initialQuery]);
 
-  const getBotResponse = (msg) => {
-    const m = msg.toLowerCase();
-    if (m.includes('housing') || m.includes('home') || m.includes('awas'))
-      return { text: `<strong>PM Awas Yojana</strong>: Subsidy up to ₹2.67 lakh (Urban) or ₹1.20 lakh (Gramin). Eligibility based on income.`, chips: ['Check eligibility', 'How to apply', 'Documents'] };
-    if (m.includes('farmer') || m.includes('kisan') || m.includes('crop'))
-      return { text: `<strong>PM Kisan Samman Nidhi</strong>: ₹6,000/year. Other schemes: PM Fasal Bima, Kisan Credit Card.`, chips: ['PM Kisan details', 'Crop insurance', 'Farm loans'] };
-    if (m.includes('health') || m.includes('medical') || m.includes('ayushman'))
-      return { text: `<strong>Ayushman Bharat PM-JAY</strong>: ₹5 lakh cover, cashless, 1900+ procedures.`, chips: ['Check eligibility', 'Find hospitals', 'Coverage'] };
-    if (m.includes('education') || m.includes('student') || m.includes('scholarship'))
-      return { text: `Education schemes: National Scholarship, Vidya Lakshmi loan, PM Vidyalaxmi (up to ₹10 lakh).`, chips: ['School', 'College', 'Study abroad'] };
-    if (m.includes('women') || m.includes('girl') || m.includes('ladies'))
-      return { text: `Key schemes: Beti Bachao Beti Padhao, PM Ujjwala, Mahila Samman Savings.`, chips: ['LPG connection', 'Girl education', 'Savings'] };
-    if (m.includes('business') || m.includes('startup') || m.includes('msme'))
-      return { text: `Startup India, MUDRA loans (up to ₹10L), Stand-Up India for SC/ST & women.`, chips: ['Startup registration', 'MUDRA loan', 'Tax benefits'] };
-    return { text: `I cover 200+ schemes. Tell me what you're looking for — housing, health, farming, education, business, or women's welfare?`, chips: ['Housing', 'Healthcare', 'Farming', 'Education', 'Business', 'Women'] };
-  };
+  const handleSendMessage = async (text = null) => {
+    const query = text || input.trim()
 
-  const handleSendMessage = (text) => {
-    const query = text || input.trim();
-    if (!query) return;
+    if (!query || isTyping) return
 
-    setMessages(prev => [...prev, { type: 'user', text: query }]);
-    setInput('');
-    setIsTyping(true);
 
-    setTimeout(() => {
-      setIsTyping(false);
-      const resp = getBotResponse(query);
-      setMessages(prev => [...prev, { type: 'bot', ...resp }]);
-    }, 1000 + Math.random() * 500);
+    const userMessage = {
+
+        type: 'user',
+
+        text: query
+    }
+
+
+    setMessages(prev => [
+
+        ...prev,
+        userMessage
+    ])
+
+
+    setInput('')
+
+    setIsTyping(true)
+
+
+    try {
+
+        const response = await fetch(
+
+          'http://127.0.0.1:8000/api/chatbot/ask/',
+
+          {
+
+              method: 'POST',
+
+              headers: {
+
+                  'Content-Type': 'application/json'
+              },
+
+              body: JSON.stringify({
+
+                  query: query,
+
+                  history: [
+
+                      ...chatHistory,
+
+                      {
+                          role: 'user',
+                          content: query
+                      }
+                  ]
+              })
+          }
+        )
+
+
+        const data = await response.json()
+
+
+        if (data.success) {
+
+          const botMessage = {
+
+              type: 'bot',
+
+              text: data.answer,
+
+              schemes: data.schemes || []
+          }
+
+
+          setMessages(prev => [
+
+              ...prev,
+              botMessage
+          ])
+
+
+          setChatHistory(prev => [
+
+              ...prev,
+
+              {
+                  role: 'user',
+                  content: query
+              },
+
+              {
+                  role: 'assistant',
+                  content: data.answer
+              }
+          ])
+
+        } else {
+
+          setMessages(prev => [
+
+              ...prev,
+
+              {
+
+                  type: 'bot',
+
+                  text:
+                      data.answer ||
+                      'No relevant scheme found.'
+              }
+          ])
+        }
+
+    } catch (error) {
+
+      console.error(error)
+
+      setMessages(prev => [
+
+          ...prev,
+
+          {
+
+              type: 'bot',
+
+              text:
+                  'Server error occurred.'
+          }
+      ])
+
+    } finally {
+
+        setIsTyping(false)
+    }
   };
 
   return (
@@ -128,13 +233,20 @@ const ChatbotPage = ({ initialQuery }) => {
                 </div>
 
                 <div className="chatbot-input-area-max">
-                    <input 
-                        type="text" 
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type your query..." 
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    />
+                  <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Type your query..."
+                      disabled={isTyping}
+                      onKeyDown={(e) => {
+
+                          if (e.key === 'Enter') {
+
+                              handleSendMessage()
+                          }
+                      }}
+                  />
                 <button onClick={() => handleSendMessage()} aria-label="Send Message">
                     <i className="fas fa-paper-plane"></i>
                 </button>

@@ -9,6 +9,8 @@ import SchemesGrid from '../components/SchemesGrid';
 import HowItWorks from '../components/HowItWorks';
 import CTABanner from '../components/CTABanner';
 import Chatbot from '../components/Chatbot';
+import Navbar from '../layouts/Navbar';
+import Footer from '../layouts/Footer';
 
 import MainLayout from '../layouts/MainLayout';
 
@@ -33,40 +35,6 @@ function Home() {
     if (!video) {
         setShowContent(true);
         setIsIntroActive(false);
-        return;
-    }
-
-    const hasPlayedIntro = localStorage.getItem('introPlayed');
-
-    if (hasPlayedIntro === 'true') {
-
-        const showFinalFrame = () => {
-
-        video.currentTime = Math.max(
-            video.duration - 0.8,
-            0
-        );
-
-        video.pause();
-
-        setIsVideoReady(true);
-        setShowContent(true);
-        setIsIntroActive(false);
-        setIsBackgroundMode(true);
-        };
-
-        if (video.readyState >= 1) {
-        showFinalFrame();
-        }
-
-        else {
-        video.addEventListener(
-            'loadedmetadata',
-            showFinalFrame,
-            { once: true }
-        );
-        }
-
         return;
     }
 
@@ -164,7 +132,7 @@ function Home() {
 
     fallbackTimer = setTimeout(
         finishIntro,
-        8000
+        4000
     );
 
     return () => {
@@ -208,77 +176,111 @@ function Home() {
     setChatbotQuery('');
   };
 
+  const [theme, setTheme] = useState(
+      () =>
+          localStorage.getItem("theme")
+          || "light"
+  );
+
+
+  useEffect(() => {
+
+      document.documentElement
+          .setAttribute(
+              "data-theme",
+              theme
+          );
+
+      localStorage.setItem(
+          "theme",
+          theme
+      );
+
+  }, [theme]);
+
+  const toggleTheme = () => {
+
+      setTheme(prev =>
+          prev === "light"
+              ? "dark"
+              : "light"
+      );
+  };
+
   return (
     <div className="app-container">
-      <div
-        className={`intro-layer ${
-          isIntroActive ? 'is-active' : 'is-finished'
-        } ${isBackgroundMode ? 'is-background' : ''}`}
-      >
-        <video
-          ref={videoRef}
-          className={`lotus-video ${
-            isVideoReady ? 'is-ready' : ''
-          } ${isBackgroundMode ? 'is-background' : ''}`}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        >
-          <source src="/Lotus.mp4" type="video/mp4" />
-
-          Your browser does not support the video tag.
-        </video>
-
-        <div
-          className={`video-overlay ${
-            isBackgroundMode ? 'is-background' : ''
-          }`}
-        ></div>
-      </div>
-      <MainLayout>
-      <motion.div
-        className={`content-wrapper ${
-          showContent ? 'is-visible' : ''
-        }`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showContent ? 1 : 0 }}
-        transition={{
-          duration: 1.5,
-          ease: 'easeOut',
-        }}
-        style={{
-          pointerEvents: showContent ? 'all' : 'none',
-        }}
-      >
-
-        <main>
-          <Hero
-            onSearch={openChatbot}
-            showContent={showContent}
-          />
-
-          <SchemesGrid
-            onSchemeClick={title =>
-              openChatbot(`Tell me about ${title}`)
-            }
-          />
-
-          <HowItWorks />
-
-          <CTABanner
-            onOpenChatbot={() => openChatbot()}
-          />
-        </main>
-      </motion.div>
-      <Chatbot
-        isOpen={isChatbotOpen}
-        onOpen={openChatbot}
-        onClose={closeChatbot}
-        initialQuery={chatbotQuery}
+      <Navbar
+          theme={theme}
+          toggleTheme={toggleTheme}
       />
-      </MainLayout>
+        <div
+          className={`intro-layer ${
+            isIntroActive ? 'is-active' : 'is-finished'
+          } ${isBackgroundMode ? 'is-background' : ''}`}
+        >
+          <video
+            ref={videoRef}
+            className={`lotus-video ${
+              isVideoReady ? 'is-ready' : ''
+            } ${isBackgroundMode ? 'is-background' : ''}`}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src={theme === 'dark' ? "/Lotus_Dark_PC.mp4" : "/Lotus_Light_PC.mp4"} type="video/mp4" />
+
+            Your browser does not support the video tag.
+          </video>
+
+          <div
+            className={`video-overlay ${
+              isBackgroundMode ? 'is-background' : ''
+            }`}
+          ></div>
+        </div>
+        <motion.div
+          className={`content-wrapper ${
+            showContent ? 'is-visible' : ''
+          }`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: showContent ? 1 : 0 }}
+          transition={{
+            duration: 1.5,
+            ease: 'easeOut',
+          }}
+          style={{
+            pointerEvents: showContent ? 'all' : 'none',
+          }}
+        >
+
+          <main>
+            <Hero
+              onSearch={openChatbot}
+              showContent={showContent}
+            />
+
+            <SchemesGrid
+              onSchemeClick={title =>
+                openChatbot(`Tell me about ${title}`)
+              }
+            />
+
+            <HowItWorks />
+
+            <CTABanner
+              onOpenChatbot={() => openChatbot()}
+            />
+          </main>
+        </motion.div>
+        <Chatbot
+          isOpen={isChatbotOpen}
+          onOpen={openChatbot}
+          onClose={closeChatbot}
+          initialQuery={chatbotQuery}
+        />
+      <Footer theme={theme} />
     </div>
   );
 }
