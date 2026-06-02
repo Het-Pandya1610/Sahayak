@@ -1,18 +1,26 @@
 from FlagEmbedding import FlagReranker
 
+import torch
+
 
 reranker = FlagReranker(
 
-    'BAAI/bge-reranker-large',
+    'BAAI/bge-reranker-base',
 
     use_fp16=True
 )
 
 
 def rerank_results(
+
     query,
     results
 ):
+
+    if not results:
+
+        return []
+
 
     pairs = []
 
@@ -35,18 +43,26 @@ def rerank_results(
 
         Eligibility:
         {scheme['eligibility']}
+
+        Category:
+        {scheme['schemeCategory']}
+
+        Tags:
+        {", ".join(scheme['tags'])}
+
+        Application:
+        {scheme['application']}
         """
 
 
         pairs.append([
 
             query,
-
             text
         ])
 
 
-    scores = reranker.compute_score(
+    raw_scores = reranker.compute_score(
         pairs
     )
 
@@ -56,10 +72,21 @@ def rerank_results(
 
     for idx, result in enumerate(results):
 
+
+        normalized_score = torch.sigmoid(
+
+            torch.tensor(raw_scores[idx])
+
+        ).item()
+
+
         reranked.append({
 
             'rerank_score':
-                float(scores[idx]),
+                float(normalized_score),
+
+            'raw_score':
+                float(raw_scores[idx]),
 
             'scheme':
                 result['scheme']

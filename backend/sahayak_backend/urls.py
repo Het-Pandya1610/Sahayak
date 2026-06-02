@@ -34,4 +34,8 @@ urlpatterns = [
             'schemes.urls'
         )
     ),
+    path(
+        'api/chatbot/',
+        include('chatbot.urls')
+    ),
 ]

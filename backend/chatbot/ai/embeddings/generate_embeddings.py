@@ -26,6 +26,9 @@ def generate_embeddings():
         Category:
         {scheme.schemeCategory}
 
+        Tags:
+        {", ".join(scheme.tags)}
+
         Details:
         {scheme.details}
 
