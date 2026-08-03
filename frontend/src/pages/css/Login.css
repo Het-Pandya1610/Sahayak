@@ -1,0 +1,207 @@
+.login-content{
+    margin: auto;
+    text-align: center;
+    padding: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.login-content h1{
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.login-form-container{
+    background-color: var(--white);
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 0px 20px var(--primary);
+    padding: 2rem;
+    width: 50%;
+    border-radius: 12px;
+    margin: auto;
+}
+
+.login-form{
+    margin: auto;
+    display: flex;
+    width: 80%;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.login-form input{
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    background: none;
+    color: var(--gray-700);
+    font-size: 1rem;
+}
+
+.login-form button{
+    padding: 0.75rem;
+    background-color: var(--primary);
+    color: var(--gray-100);
+    font-weight: 800;
+    border: none;
+    border-radius: 8px;
+    width: 30%;
+    margin: auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover{
+    background-color: var(--primary-dark);
+}
+
+.register-link a{
+    color: var(--gray-900);
+    text-decoration: none;
+    font-weight: 400;
+    transition: border-bottom 0.5s ease;
+}
+
+.register-link a:hover {
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Divider between email/password form and Google button */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    gap: 15px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.divider span {
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Google Button */
+.google-login-btn,
+.google-register-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    background: #ffffff;
+    color: #333;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.google-login-btn:hover,
+.google-register-btn:hover {
+    background: #f8f9fa;
+    border-color: #bbb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.google-login-btn:active,
+.google-register-btn:active {
+    transform: translateY(0);
+}
+
+.google-login-btn:disabled,
+.google-register-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.google-login-btn img,
+.google-register-btn img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .google-login-btn,
+[data-theme="dark"] .google-register-btn {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+[data-theme="dark"] .google-login-btn:hover,
+[data-theme="dark"] .google-register-btn:hover {
+    background: #3d3d3d;
+    border-color: #6b7280;
+}
+
+[data-theme="dark"] .divider::before,
+[data-theme="dark"] .divider::after {
+    background: #4b5563;
+}
+
+[data-theme="dark"] .divider span {
+    color: #9ca3af;
+}
+
+/* Message styles */
+.register-message {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.register-message.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.register-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+.login-error {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-top: 12px;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+[data-theme="dark"] .register-message.success {
+    background: #065f46;
+    color: #a7f3d0;
+    border-color: #059669;
+}
+
+[data-theme="dark"] .register-message.error,
+[data-theme="dark"] .login-error {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-color: #dc2626;
+}

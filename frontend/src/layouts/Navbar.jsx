@@ -1,17 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+import { getAvatarColors, getInitials, getCurrentTheme } from '../utils/avatarUtils';
 
 const Navbar = ({ theme, toggleTheme }) => {
-    const isAuthenticated = false;
+    const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null);
+    const [userInitials, setUserInitials] = useState('');
+    const [avatarColors, setAvatarColors] = useState({});
+
+    // Check authentication status on mount and when localStorage changes
+    useEffect(() => {
+        const checkAuth = () => {
+            const token = localStorage.getItem('token');
+            const userData = localStorage.getItem('user');
+            
+            if (token && userData) {
+                try {
+                    const parsedUser = JSON.parse(userData);
+                    setUser(parsedUser);
+                    setIsAuthenticated(true);
+                    
+                    // Generate initials using shared utility
+                    const initials = getInitials(parsedUser.fname, parsedUser.lname);
+                    setUserInitials(initials);
+                    
+                    // Generate theme-aware colors using shared utility
+                    const seed = parsedUser.id || parsedUser.email || 'user';
+                    setAvatarColors(getAvatarColors(seed, theme));
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    setIsAuthenticated(false);
+                }
+            } else {
+                setIsAuthenticated(false);
+                setUser(null);
+            }
+        };
+
+        checkAuth();
+    }, [theme]); // Re-run when theme changes
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setUser(null);
+        navigate('/');
+    };
+
+    const handleScroll = () => {
+        setScrolled(window.scrollY > 20);
+    };
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -74,8 +120,8 @@ const Navbar = ({ theme, toggleTheme }) => {
                         </motion.div>
                     </AnimatePresence>
                 </button>
+                
                 {!isAuthenticated ? (
-
                     <>
                         <Link
                             to="/register"
@@ -83,7 +129,6 @@ const Navbar = ({ theme, toggleTheme }) => {
                         >
                             Register
                         </Link>
-
                         <Link
                             to="/login"
                             className="login-btn"
@@ -91,26 +136,35 @@ const Navbar = ({ theme, toggleTheme }) => {
                             Log In
                         </Link>
                     </>
-
                 ) : (
-                    <>
-                        <Link to="/profile">
-                            <button className="profile" aria-label="Profile">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                            </button>
+                    <div className="authenticated-actions">
+                        <Link to="/profile" className="profile-link">
+                            <div 
+                                className="profile-avatar"
+                                style={{
+                                    backgroundColor: avatarColors.background,
+                                    color: avatarColors.text,
+                                    borderColor: avatarColors.border || avatarColors.background
+                                }}
+                                data-fullname={`${user?.fname || ''} ${user?.lname || ''}`.trim() || 'User'}
+                            >
+                                {userInitials || 'U'}
+                            </div>
                         </Link>
                         <button
                             className="logout-btn"
                             onClick={handleLogout}
                         >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
                             Logout
                         </button>
-                    </>
-
+                    </div>
                 )}
+                
                 <button 
                     className={`hamburger ${mobileMenuOpen ? 'active' : ''}`} 
                     onClick={toggleMobileMenu}
@@ -120,18 +174,25 @@ const Navbar = ({ theme, toggleTheme }) => {
                 </button>
             </div>
 
+            {/* Mobile Menu Overlay */}
+            <div 
+                className={`mobile-overlay ${mobileMenuOpen ? 'open' : ''}`} 
+                onClick={closeMobileMenu}
+            ></div>
+
             {/* Mobile Menu */}
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <motion.div 
-                        className="mobile-menu"
+                        className="mobile-menu open"
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                     >
                         <ul className="mobile-nav-links">
                             <li><Link to="/schemes" onClick={closeMobileMenu}>Schemes</Link></li>
+                            <li><Link to="/chatbot" onClick={closeMobileMenu}>Chatbot</Link></li>
                             <li><Link to="/about" onClick={closeMobileMenu}>About</Link></li>
                             <li><Link to="/contact" onClick={closeMobileMenu}>Contact</Link></li>
                             <li>

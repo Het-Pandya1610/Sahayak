@@ -91,7 +91,7 @@ const Chatbot = ({ isOpen, onOpen, onClose, initialQuery }) => {
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     >
                         <div className="chatbot-panel">
-                            <div className="chatbot-header">
+                            <div className="chatbot-header-min">
                                 <div className="chatbot-header-left">
                                     <div className="chatbot-avatar"><i className="fas fa-robot"></i></div>
                                     <div>
