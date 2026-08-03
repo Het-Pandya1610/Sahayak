@@ -22,20 +22,8 @@ from django.urls import (
 )
 
 urlpatterns = [
-
-    path(
-        'admin/',
-        admin.site.urls
-    ),
-
-    path(
-        'api/schemes/',
-        include(
-            'schemes.urls'
-        )
-    ),
-    path(
-        'api/chatbot/',
-        include('chatbot.urls')
-    ),
+    path('admin/',admin.site.urls),
+    path('api/schemes/',include('schemes.urls')),
+    path('api/chatbot/',include('chatbot.urls')),
+    path('api/account/',include('account.urls')),
 ]
