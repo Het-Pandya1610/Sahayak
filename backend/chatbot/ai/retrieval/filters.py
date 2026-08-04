@@ -14,90 +14,82 @@ def filter_results(results, threshold=0.42):
             filtered.append(result)
     return filtered
 
-def check_category_match(scheme_data, user_category):
+def check_category_match_scheme(scheme_data, user_category):
     """
-    ULTRA STRICT category matching - completely removes mismatched categories
+    Check if scheme matches user's category using pre-extracted data
+    FAST and ACCURATE - no regex needed!
     """
     if not user_category:
         return {'match': False, 'penalty': 0.0, 'skip': False}
     
-    # Convert everything to lowercase for case-insensitive matching
-    scheme_category = str(scheme_data.get('schemeCategory', '')).lower()
-    eligibility = str(scheme_data.get('eligibility', '')).lower()
-    scheme_name = str(scheme_data.get('scheme_name', '')).lower()
-    level = str(scheme_data.get('level', '')).lower()
+    # Get pre-extracted categories from the scheme
+    extracted_categories = scheme_data.get('extracted_categories', [])
+    is_category_specific = scheme_data.get('is_category_specific', False)
+    primary_category = scheme_data.get('primary_category', '')
     
-    # Combine all text for checking
-    full_text = f"{scheme_category} {eligibility} {scheme_name} {level}"
-    
-    # Category keywords - more comprehensive
-    category_keywords = {
-        'sc': [
-            'scheduled caste', 'scheduled castes', 'sc', 'sc/st', 'sc and st', 
-            'sc st', 'dalit', 'sc category', 'sc candidate', 'sc students'
-        ],
-        'st': [
-            'scheduled tribe', 'scheduled tribes', 'st', 'adivasi', 'tribal',
-            'st category', 'st candidate', 'st students'
-        ],
-        'obc': [
-            'other backward class', 'backward class', 'obc', 'obc category',
-            'obc candidate', 'obc students'
-        ],
-        'ews': [
-            'economically weaker', 'economically weaker section', 'ews',
-            'ews category', 'ews candidate'
-        ],
-        'general': [
-            'general', 'general category', 'open', 'unreserved', 'gen',
-            'general candidate', 'open category'
-        ]
-    }
-    
-    # Check which categories the scheme is for
-    scheme_categories = []
-    for category, keywords in category_keywords.items():
-        for keyword in keywords:
-            if keyword in full_text:
-                scheme_categories.append(category)
-                break
-    
-    # If scheme mentions any reserved category
-    reserved_categories = ['sc', 'st', 'obc', 'ews']
-    scheme_has_reserved = any(cat in scheme_categories for cat in reserved_categories)
-    
-    # If user is GENERAL
-    if user_category == 'general':
-        # If scheme mentions ANY reserved category, SKIP IT
-        if scheme_has_reserved:
-            return {'match': False, 'penalty': 1.0, 'skip': True}
-        
-        # If scheme explicitly mentions GENERAL, it's a match
-        if 'general' in scheme_categories:
-            return {'match': True, 'penalty': 0.0, 'skip': False}
-        
-        # If scheme doesn't mention any category, it's open to all
-        if not scheme_categories:
-            return {'match': False, 'penalty': 0.0, 'skip': False}
-        
-        # Default: allow if no reserved categories mentioned
+    # If no categories extracted, scheme is open to all
+    if not extracted_categories:
         return {'match': False, 'penalty': 0.0, 'skip': False}
     
-    # If user is in a reserved category
-    if user_category in reserved_categories:
-        # If scheme mentions user's category, it's a match
-        if user_category in scheme_categories:
-            return {'match': True, 'penalty': 0.0, 'skip': False}
-        
-        # If scheme mentions a different reserved category, skip it
-        if scheme_has_reserved:
+    # Define reserved categories
+    reserved_categories = ['sc', 'st', 'obc', 'ews']
+    
+    # Check if scheme has any reserved category
+    has_reserved = any(cat in extracted_categories for cat in reserved_categories)
+    
+    # ============================================================
+    # USER IS GENERAL CATEGORY
+    # ============================================================
+    if user_category == 'general':
+        # If scheme has reserved categories, SKIP IT
+        if has_reserved:
             return {'match': False, 'penalty': 1.0, 'skip': True}
         
-        # If scheme doesn't mention any category, it's open
-        if not scheme_categories:
+        # If scheme has 'general' in categories, it's a match
+        if 'general' in extracted_categories:
+            return {'match': True, 'penalty': 0.0, 'skip': False}
+        
+        # If scheme has no specific category, it's open
+        if not is_category_specific:
+            return {'match': False, 'penalty': 0.0, 'skip': False}
+        
+        # Default: allow if no reserved categories
+        return {'match': False, 'penalty': 0.0, 'skip': False}
+    
+    # ============================================================
+    # USER IS IN RESERVED CATEGORY (SC, ST, OBC, EWS)
+    # ============================================================
+    if user_category in reserved_categories:
+        # If scheme explicitly mentions user's category, it's a MATCH
+        if user_category in extracted_categories:
+            return {'match': True, 'penalty': 0.0, 'skip': False}
+        
+        # If scheme has a different reserved category, SKIP IT
+        other_reserved = [cat for cat in reserved_categories if cat in extracted_categories and cat != user_category]
+        if other_reserved:
+            return {'match': False, 'penalty': 1.0, 'skip': True}
+        
+        # If scheme has no category or is open, it's allowed
+        if not extracted_categories or not is_category_specific:
+            return {'match': False, 'penalty': 0.0, 'skip': False}
+        
+        # If scheme has 'general' in categories, it's allowed for reserved users too
+        if 'general' in extracted_categories:
             return {'match': False, 'penalty': 0.0, 'skip': False}
     
-    # Default
+    # ============================================================
+    # USER IS IN OTHER SPECIAL CATEGORIES (Minority, Women, etc.)
+    # ============================================================
+    # For these, we check if scheme mentions any category
+    if extracted_categories and is_category_specific:
+        # If scheme is specific to a category that doesn't match user
+        if user_category not in extracted_categories:
+            # Check if scheme is for a different specific category
+            if len(extracted_categories) == 1:
+                # Scheme is only for one specific category
+                return {'match': False, 'penalty': 0.5, 'skip': False}
+    
+    # Default: allow if no strict mismatch
     return {'match': False, 'penalty': 0.0, 'skip': False}
 
 def check_education_match(scheme_data, user_education):
@@ -213,7 +205,7 @@ def check_gender_match(scheme_data, user_gender):
 
 def filter_by_profile(results, profile: Dict[str, Any], boost_factor: float = 0.15):
     """
-    Filter and boost results based on user profile - ULTRA STRICT VERSION
+    Filter and boost results based on user profile using extracted categories
     """
     if not results or not profile:
         return results
@@ -223,7 +215,7 @@ def filter_by_profile(results, profile: Dict[str, Any], boost_factor: float = 0.
     for result in results:
         scheme = result['scheme']
         
-        # Extract scheme data
+        # Extract scheme data - include extracted categories
         if isinstance(scheme, dict):
             scheme_data = scheme
         else:
@@ -232,7 +224,11 @@ def filter_by_profile(results, profile: Dict[str, Any], boost_factor: float = 0.
                 'schemeCategory': scheme.schemeCategory,
                 'level': scheme.level,
                 'eligibility': scheme.eligibility,
-                'details': scheme.details
+                'details': scheme.details,
+                # Extracted category fields
+                'extracted_categories': getattr(scheme, 'extracted_categories', []),
+                'is_category_specific': getattr(scheme, 'is_category_specific', False),
+                'primary_category': getattr(scheme, 'primary_category', ''),
             }
         
         boost = 0.0
@@ -241,10 +237,10 @@ def filter_by_profile(results, profile: Dict[str, Any], boost_factor: float = 0.
         skip = False
         
         # ============================================================
-        # ULTRA STRICT CATEGORY FILTERING
+        # FAST CATEGORY FILTERING USING EXTRACTED DATA
         # ============================================================
         if profile.get('category'):
-            cat_result = check_category_match(scheme_data, profile['category'])
+            cat_result = check_category_match_scheme(scheme_data, profile['category'])
             
             # If skip is True, completely remove this scheme
             if cat_result.get('skip', False):

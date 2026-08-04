@@ -82,7 +82,16 @@ def generate_embeddings():
                 scheme.schemeCategory,
 
             'tags':
-                scheme.tags
+                scheme.tags,
+
+            'extracted_categories':
+                getattr(scheme, 'extracted_categories', []),
+
+            'is_category_specific':
+                getattr(scheme, 'is_category_specific', False),
+
+            'primary_category':
+                getattr(scheme, 'primary_category', ''),
         })
 
 

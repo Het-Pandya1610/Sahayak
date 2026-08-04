@@ -1,4 +1,4 @@
-from mongoengine import (Document,StringField,ListField)  # type: ignore
+from mongoengine import (Document,StringField,ListField,BooleanField)  # type: ignore
 
 class Scheme(Document):
 
@@ -22,6 +22,11 @@ class Scheme(Document):
 
     tags = ListField(StringField())
 
+    extracted_categories = ListField(StringField())  # e.g., ['sc', 'st', 'general']
+    is_category_specific = BooleanField(default=False)  # True if scheme mentions any category
+    eligible_categories = ListField(StringField())  # Standardized category names
+    primary_category = StringField()
+
     meta = {
         'collection': 'schemes',
         'indexes': [
@@ -29,6 +34,9 @@ class Scheme(Document):
             'slug',
             'level',
             'schemeCategory',
-            'tags'
+            'tags',
+            'extracted_categories',
+            'eligible_categories',
+            'primary_category',
         ]
     }
