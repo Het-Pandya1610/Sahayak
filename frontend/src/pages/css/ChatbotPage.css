@@ -1,4 +1,4 @@
-/* ChatbotPage.css - Complete Updated Version */
+/* ChatbotPage.css - Complete Updated Version with Better Markdown Styling */
 
 .chatbot-content {
     display: flex;
@@ -244,7 +244,7 @@
     border-radius: 10px;
 }
 
-/* Session Actions - Delete & Rename Buttons */
+/* Session Actions */
 .session-actions {
     display: flex;
     align-items: center;
@@ -284,35 +284,6 @@
 .rename-session:hover {
     color: #2563eb;
     background: rgba(37, 99, 235, 0.1);
-}
-
-/* Make session info clickable */
-.session-info {
-    flex: 1;
-    min-width: 0;
-    cursor: pointer;
-    padding: 2px 0;
-}
-
-/* Update session item to use flex layout */
-.session-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    border-radius: var(--radius);
-    cursor: default;
-    transition: all var(--transition-theme);
-    gap: 8px;
-    position: relative;
-}
-
-.session-item:hover {
-    background: var(--gray-200);
-}
-
-.session-item.active {
-    background: var(--gray-200);
-    border: 1px solid var(--lotus-border);
 }
 
 /* Responsive adjustments */
@@ -420,7 +391,7 @@
 }
 
 /* ============================================================
-   MESSAGES AREA
+   MESSAGES AREA - IMPROVED MARKDOWN STYLING
    ============================================================ */
 .chatbot-messages-max {
     flex: 1;
@@ -448,10 +419,10 @@
 
 .max-msg {
     max-width: 85%;
-    padding: 12px 16px;
+    padding: 16px 20px;
     border-radius: 16px;
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.7;
     word-wrap: break-word;
 }
 
@@ -460,17 +431,239 @@
     color: var(--gray-800);
     align-self: flex-start;
     border: 1px solid var(--lotus-border);
+    padding: 18px 22px;
 }
 
 .max-msg.user {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     color: var(--white);
     align-self: flex-end;
+    padding: 14px 18px;
+}
+
+.max-msg.user .markdown-content a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.max-msg.user .markdown-content code {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.max-msg.user .markdown-content pre {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.max-msg.user .markdown-content blockquote {
+    border-left-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.max-msg.user .markdown-content hr {
+    border-top-color: rgba(255, 255, 255, 0.2);
 }
 
 .max-msg .fa-hand-sparkles {
-    margin-right: 8px;
+    margin-right: 10px;
     color: var(--secondary);
+    font-size: 1.1rem;
+}
+
+/* ============================================================
+   IMPROVED MARKDOWN STYLES
+   ============================================================ */
+.markdown-content {
+    display: block;
+    width: 100%;
+    line-height: 1.8;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    margin: 12px 0 8px 0;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.markdown-content h1 { font-size: 1.6rem; }
+.markdown-content h2 { font-size: 1.4rem; }
+.markdown-content h3 { font-size: 1.2rem; }
+.markdown-content h4 { font-size: 1.1rem; }
+.markdown-content h5 { font-size: 1rem; }
+.markdown-content h6 { font-size: 0.95rem; }
+
+.markdown-content p {
+    margin: 6px 0;
+    line-height: 1.8;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+    list-style-position: outside;
+}
+
+.markdown-content ul {
+    list-style-type: disc;
+}
+
+.markdown-content ol {
+    list-style-type: decimal;
+}
+
+.markdown-content li {
+    margin: 4px 0;
+    line-height: 1.7;
+}
+
+.markdown-content li > ul,
+.markdown-content li > ol {
+    margin: 4px 0 4px 16px;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid var(--secondary);
+    padding: 10px 16px;
+    margin: 10px 0;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    color: var(--gray-600);
+    font-style: italic;
+}
+
+.markdown-content blockquote p {
+    margin: 4px 0;
+}
+
+.markdown-content code {
+    background: rgba(0, 0, 0, 0.07);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'Courier New', monospace;
+    color: var(--gray-800);
+    word-break: break-word;
+}
+
+.markdown-content pre {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 10px 0;
+    border: 1px solid var(--lotus-border);
+}
+
+.markdown-content pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.9em;
+    color: var(--gray-800);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.markdown-content a {
+    color: var(--secondary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: all 0.3s ease;
+}
+
+.markdown-content a:hover {
+    opacity: 0.8;
+    text-decoration-thickness: 2px;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 2px solid var(--lotus-border);
+    margin: 14px 0;
+    opacity: 0.5;
+}
+
+.markdown-content strong {
+    font-weight: 700;
+}
+
+.markdown-content em {
+    font-style: italic;
+}
+
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 0.9em;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid var(--lotus-border);
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.markdown-content th {
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.markdown-content tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.markdown-content tr:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+/* Dark theme markdown refinements */
+[data-theme="dark"] .markdown-content code {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--gray-200);
+}
+
+[data-theme="dark"] .markdown-content pre {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--gray-700);
+}
+
+[data-theme="dark"] .markdown-content pre code {
+    color: var(--gray-200);
+}
+
+[data-theme="dark"] .markdown-content blockquote {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--gray-400);
+}
+
+[data-theme="dark"] .markdown-content th {
+    background: var(--gray-800);
+    color: var(--gray-200);
+}
+
+[data-theme="dark"] .markdown-content tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .markdown-content tr:hover {
+    background: rgba(255, 255, 255, 0.04);
 }
 
 /* ============================================================
@@ -479,19 +672,22 @@
 .suggestion-chips-max {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--lotus-border);
 }
 
 .chip-max {
     background: var(--white);
     color: var(--primary);
     border: 1px solid var(--lotus-border);
-    padding: 6px 14px;
+    padding: 6px 16px;
     border-radius: 20px;
     font-size: 0.8rem;
     cursor: pointer;
     transition: all var(--transition-theme);
+    font-weight: 500;
 }
 
 .chip-max:hover {
@@ -502,20 +698,31 @@
     box-shadow: var(--shadow-sm);
 }
 
+[data-theme="dark"] .chip-max {
+    background: var(--gray-800);
+    color: var(--gray-200);
+}
+
+[data-theme="dark"] .chip-max:hover {
+    background: var(--secondary);
+    color: var(--white);
+}
+
 /* ============================================================
    TYPING INDICATOR
    ============================================================ */
 .typing-indicator-max {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 2px;
+    gap: 6px;
+    padding: 10px 4px;
     align-self: flex-start;
+    margin-left: 4px;
 }
 
 .typing-indicator-max span {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: var(--secondary);
     animation: waveShine 1.5s infinite ease-in-out;
@@ -603,6 +810,117 @@
 }
 
 /* ============================================================
+   MESSAGE ACTIONS (Edit/Delete)
+   ============================================================ */
+.message-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.max-msg.user:hover .message-actions {
+    opacity: 1;
+}
+
+.msg-action-btn {
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.msg-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.msg-action-btn.edit-btn:hover {
+    color: #93c5fd;
+}
+
+.msg-action-btn.delete-btn:hover {
+    color: #fca5a5;
+}
+
+/* ============================================================
+   EDIT MESSAGE CONTAINER
+   ============================================================ */
+.edit-message-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: none;
+    color: var(--text-color);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.edit-textarea:focus {
+    outline: none;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-save-btn,
+.edit-cancel-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.edit-save-btn {
+    background: var(--secondary);
+    color: white;
+}
+
+.edit-save-btn:hover {
+    background: var(--secondary-hover);
+    transform: translateY(-2px);
+}
+
+.edit-cancel-btn {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.edit-cancel-btn:hover {
+    background: var(--gray-300);
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .edit-cancel-btn {
+    background: var(--gray-700);
+    color: var(--gray-300);
+}
+
+[data-theme="dark"] .edit-cancel-btn:hover {
+    background: var(--gray-600);
+}
+
+/* ============================================================
    RESPONSIVE DESIGN
    ============================================================ */
 
@@ -677,8 +995,9 @@
     }
 
     .max-msg {
-        max-width: 90%;
-        font-size: 0.85rem;
+        max-width: 92%;
+        font-size: 0.9rem;
+        padding: 14px 18px;
     }
 
     .chatbot-input-area-max {
@@ -718,6 +1037,17 @@
     .empty-chat p {
         font-size: 16px;
     }
+
+    .max-msg {
+        max-width: 95%;
+        padding: 12px 16px;
+        font-size: 0.85rem;
+    }
+
+    .markdown-content h1 { font-size: 1.3rem; }
+    .markdown-content h2 { font-size: 1.2rem; }
+    .markdown-content h3 { font-size: 1.1rem; }
+    .markdown-content h4 { font-size: 1rem; }
 }
 
 /* Small Mobile Phones */
@@ -760,10 +1090,10 @@
     }
 
     .max-msg {
-        padding: 10px 12px;
+        padding: 10px 14px;
         font-size: 0.8rem;
         border-radius: 12px;
-        max-width: 95%;
+        max-width: 98%;
     }
 
     .suggestion-chips-max {
@@ -808,6 +1138,10 @@
     .chatbot-loading p {
         font-size: 14px;
     }
+
+    .markdown-content {
+        font-size: 0.85rem;
+    }
 }
 
 /* ============================================================
@@ -828,6 +1162,7 @@
 [data-theme="dark"] .max-msg.bot {
     background: var(--gray-800);
     color: var(--gray-200);
+    border-color: var(--gray-700);
 }
 
 [data-theme="dark"] .chatbot-input-area-max input {
@@ -838,16 +1173,6 @@
 
 [data-theme="dark"] .chatbot-input-area-max input::placeholder {
     color: var(--gray-500);
-}
-
-[data-theme="dark"] .chip-max {
-    background: var(--gray-800);
-    color: var(--gray-200);
-}
-
-[data-theme="dark"] .chip-max:hover {
-    background: var(--secondary);
-    color: var(--white);
 }
 
 [data-theme="dark"] .sidebar-toggle {

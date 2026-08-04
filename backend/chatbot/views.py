@@ -312,6 +312,213 @@ def chat_session_rename(request, session_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
+def chat_clear_messages(request, session_id):
+    """Clear all messages in a chat session (keep only welcome message)"""
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    user_id = get_user_from_token(request)
+    if not user_id:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        session = ChatSession.objects.get(id=uuid.UUID(session_id), user_id=user_id, is_active=True)
+        
+        # Delete all messages except the welcome message
+        # Get the welcome message (first message in the session)
+        first_msg = ChatMessage.objects(session=session).order_by('created_at').first()
+        
+        # Delete all messages
+        ChatMessage.objects(session=session).delete()
+        
+        # Re-create welcome message
+        welcome_msg = ChatMessage(
+            session=session,
+            role='assistant',
+            content="Hello! I'm your trusted AI guide. Ask me about any government scheme — I'll provide accurate, verified details.",
+            created_at=datetime.utcnow()
+        )
+        welcome_msg.save()
+        
+        # Update session title
+        session.title = "New Chat"
+        session.updated_at = datetime.utcnow()
+        session.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Chat cleared successfully',
+            'session': {
+                'id': str(session.id),
+                'title': session.title
+            }
+        })
+        
+    except ChatSession.DoesNotExist:
+        return JsonResponse({'error': 'Session not found'}, status=404)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid session ID'}, status=400)
+    except Exception as e:
+        print("Error clearing chat:", str(e))
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def chat_delete_message(request, session_id, message_id):
+    """Delete a specific message and its paired response"""
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    user_id = get_user_from_token(request)
+    if not user_id:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        session = ChatSession.objects.get(id=uuid.UUID(session_id), user_id=user_id, is_active=True)
+        
+        # Find the message to delete
+        try:
+            message = ChatMessage.objects.get(id=uuid.UUID(message_id), session=session)
+        except ChatMessage.DoesNotExist:
+            return JsonResponse({'error': 'Message not found'}, status=404)
+        except ValueError:
+            return JsonResponse({'error': 'Invalid message ID'}, status=400)
+        
+        # Get the message role and timestamp
+        message_role = message.role
+        message_created = message.created_at
+        
+        # Delete the message
+        message.delete()
+        
+        # If it was a user message, also delete the assistant's response (if any)
+        deleted_paired = False
+        if message_role == 'user':
+            # Find the assistant message that came after this user message
+            paired_msg = ChatMessage.objects(
+                session=session,
+                role='assistant',
+                created_at__gt=message_created
+            ).order_by('created_at').first()
+            
+            if paired_msg:
+                paired_msg.delete()
+                deleted_paired = True
+        
+        # Update session timestamp
+        session.updated_at = datetime.utcnow()
+        session.save()
+        
+        # Check if this was the last user message, update title
+        user_count = ChatMessage.objects(session=session, role='user').count()
+        if user_count == 0:
+            session.title = "New Chat"
+            session.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Message deleted successfully',
+            'paired_deleted': deleted_paired
+        })
+        
+    except ChatSession.DoesNotExist:
+        return JsonResponse({'error': 'Session not found'}, status=404)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid ID'}, status=400)
+    except Exception as e:
+        print("Error deleting message:", str(e))
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def chat_edit_message(request, session_id, message_id):
+    """Edit a user message and regenerate response"""
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    user_id = get_user_from_token(request)
+    if not user_id:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        body = json.loads(request.body)
+        new_content = body.get('content', '')
+        
+        if not new_content:
+            return JsonResponse({'error': 'New content is required'}, status=400)
+        
+        session = ChatSession.objects.get(id=uuid.UUID(session_id), user_id=user_id, is_active=True)
+        
+        # Find the user message
+        user_message = ChatMessage.objects.get(id=uuid.UUID(message_id), session=session)
+        
+        if user_message.role != 'user':
+            return JsonResponse({'error': 'Only user messages can be edited'}, status=400)
+        
+        # Delete the associated assistant response if it exists
+        next_messages = ChatMessage.objects(session=session, created_at__gt=user_message.created_at).order_by('created_at')
+        if next_messages.count() > 0:
+            next_msg = next_messages.first()
+            if next_msg.role == 'assistant':
+                next_msg.delete()
+        
+        # Update the user message
+        user_message.content = new_content
+        user_message.created_at = datetime.utcnow()  # Update timestamp
+        user_message.save()
+        
+        # Get full chat history for context
+        history = []
+        for msg in ChatMessage.objects(session=session).order_by('created_at'):
+            history.append({
+                'role': msg.role,
+                'content': msg.content
+            })
+        
+        # Call chatbot pipeline to generate new response
+        response = chatbot_pipeline(new_content, history)
+        
+        # Save new assistant message
+        assistant_message = ChatMessage(
+            session=session,
+            role='assistant',
+            content=response.get('answer', 'No response generated'),
+            schemes=response.get('schemes', []),
+            created_at=datetime.utcnow()
+        )
+        assistant_message.save()
+        
+        # Update session timestamp
+        session.updated_at = datetime.utcnow()
+        session.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Message edited and response regenerated',
+            'user_message': {
+                'id': str(user_message.id),
+                'content': user_message.content,
+                'created_at': user_message.created_at.isoformat()
+            },
+            'assistant_message': {
+                'id': str(assistant_message.id),
+                'content': assistant_message.content,
+                'schemes': assistant_message.schemes,
+                'created_at': assistant_message.created_at.isoformat()
+            }
+        })
+        
+    except ChatSession.DoesNotExist:
+        return JsonResponse({'error': 'Session not found'}, status=404)
+    except ChatMessage.DoesNotExist:
+        return JsonResponse({'error': 'Message not found'}, status=404)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid ID'}, status=400)
+    except Exception as e:
+        print("Error editing message:", str(e))
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
 def analyze_image(request):
     """
     Analyze an image and generate a professional email

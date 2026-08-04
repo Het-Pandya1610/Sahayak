@@ -33,6 +33,10 @@ const ChatbotPage = () => {
         currentTitle: ''
     });
     
+    // Message editing states
+    const [editingMessageIndex, setEditingMessageIndex] = useState(null);
+    const [editText, setEditText] = useState('');
+    
     const messagesEndRef = useRef(null);
     const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
@@ -49,57 +53,56 @@ const ChatbotPage = () => {
 
     // Format date for sidebar
     const formatDate = (dateStr) => {
-      if (!dateStr) return 'Unknown';
-      
-      try {
-          let date;
-          
-          if (dateStr instanceof Date) {
-              date = dateStr;
-          } else {
-              date = new Date(dateStr);
-              if (isNaN(date.getTime())) {
-                  const cleaned = dateStr.replace('Z', '').replace('T', ' ');
-                  date = new Date(cleaned + 'Z');
-              }
-          }
-          
-          if (isNaN(date.getTime())) {
-              console.warn('Invalid date:', dateStr);
-              return 'Unknown';
-          }
-          
-          const now = new Date();
-          const diffMs = now.getTime() - date.getTime();
-          
-          // If date is in the future, return the date
-          if (diffMs < 0) {
-              return date.toLocaleDateString('en-IN', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric'
-              });
-          }
-          
-          const diffMins = Math.floor(diffMs / 60000);
-          const diffHours = Math.floor(diffMs / 3600000);
-          const diffDays = Math.floor(diffMs / 86400000);
-          const diffWeeks = Math.floor(diffDays / 7);
-          const diffMonths = Math.floor(diffDays / 30);
-          const diffYears = Math.floor(diffDays / 365);
+        if (!dateStr) return 'Unknown';
+        
+        try {
+            let date;
+            
+            if (dateStr instanceof Date) {
+                date = dateStr;
+            } else {
+                date = new Date(dateStr);
+                if (isNaN(date.getTime())) {
+                    const cleaned = dateStr.replace('Z', '').replace('T', ' ');
+                    date = new Date(cleaned + 'Z');
+                }
+            }
+            
+            if (isNaN(date.getTime())) {
+                console.warn('Invalid date:', dateStr);
+                return 'Unknown';
+            }
+            
+            const now = new Date();
+            const diffMs = now.getTime() - date.getTime();
+            
+            if (diffMs < 0) {
+                return date.toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+            
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            const diffWeeks = Math.floor(diffDays / 7);
+            const diffMonths = Math.floor(diffDays / 30);
+            const diffYears = Math.floor(diffDays / 365);
 
-          if (diffMins < 1) return 'Just now';
-          if (diffMins < 60) return `${diffMins}m ago`;
-          if (diffHours < 24) return `${diffHours}h ago`;
-          if (diffDays < 7) return `${diffDays}d ago`;
-          if (diffWeeks < 4) return `${diffWeeks}w ago`;
-          if (diffMonths < 12) return `${diffMonths}mo ago`;
-          return `${diffYears}y ago`;
-          
-      } catch (error) {
-          console.error('Error formatting date:', dateStr, error);
-          return 'Unknown';
-      }
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            if (diffWeeks < 4) return `${diffWeeks}w ago`;
+            if (diffMonths < 12) return `${diffMonths}mo ago`;
+            return `${diffYears}y ago`;
+            
+        } catch (error) {
+            console.error('Error formatting date:', dateStr, error);
+            return 'Unknown';
+        }
     };
 
     // Fetch sessions from backend
@@ -128,7 +131,7 @@ const ChatbotPage = () => {
         }
     };
 
-    // Load session messages
+    // Load session messages - FIXED: ensure IDs are stored
     const loadSession = async (sessionId) => {
         try {
             const token = getToken();
@@ -140,12 +143,17 @@ const ChatbotPage = () => {
 
             if (response.data.success) {
                 const session = response.data.session;
+                console.log("📋 Session data:", session);
+                
                 const formattedMessages = session.messages.map(msg => ({
+                    id: msg.id,  // ✅ Store the ID
                     type: msg.role === 'user' ? 'user' : 'bot',
                     text: msg.content,
                     schemes: msg.schemes || [],
                     chips: msg.role === 'assistant' && msg.content.includes('Hello!') ? ['Housing', 'Farmer', 'Health', 'Education'] : undefined
                 }));
+                
+                console.log("📋 Formatted messages with IDs:", formattedMessages);
                 setMessages(formattedMessages);
                 setCurrentSessionId(sessionId);
                 return true;
@@ -178,6 +186,7 @@ const ChatbotPage = () => {
                 navigate(`/chatbot/session/${session.id}`);
                 setCurrentSessionId(session.id);
                 const formattedMessages = session.messages.map(msg => ({
+                    id: msg.id,
                     type: msg.role === 'user' ? 'user' : 'bot',
                     text: msg.content,
                     schemes: msg.schemes || [],
@@ -276,7 +285,6 @@ const ChatbotPage = () => {
     const handleConfirmRename = async (sessionId, newTitle) => {
         try {
             const token = getToken();
-            // Note: You'll need to add this endpoint to your backend
             const response = await axios.patch(
                 `${API_URL}/chatbot/sessions/${sessionId}/rename/`,
                 { title: newTitle },
@@ -290,9 +298,10 @@ const ChatbotPage = () => {
 
             if (response.data.success) {
                 await fetchSessions();
-                // If this is the current session, update the title in the UI
                 if (sessionId === currentSessionId) {
-                    // Title will update from the fetchSessions call
+                    setSessions(prev => prev.map(s => 
+                        s.id === sessionId ? { ...s, title: newTitle } : s
+                    ));
                 }
             } else {
                 alert(response.data.error || 'Failed to rename session');
@@ -303,9 +312,163 @@ const ChatbotPage = () => {
         }
     };
 
+    // ============================================================
+    // CLEAR CHAT - Delete all messages
+    // ============================================================
+    const handleClearChat = async () => {
+        if (!window.confirm('Clear all messages in this chat? This cannot be undone.')) return;
+        
+        try {
+            const token = getToken();
+            const response = await axios.delete(
+                `${API_URL}/chatbot/sessions/${currentSessionId}/clear/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            if (response.data.success) {
+                const welcomeMsg = {
+                    type: 'bot',
+                    text: "Hello! I'm your trusted AI guide. Ask me about any government scheme — I'll provide accurate, verified details.",
+                    chips: ['Housing', 'Farmer', 'Health', 'Education']
+                };
+                setMessages([welcomeMsg]);
+                await fetchSessions();
+            }
+        } catch (error) {
+            console.error('Error clearing chat:', error);
+            alert('Failed to clear chat. Please try again.');
+        }
+    };
+
+    // ============================================================
+    // DELETE SINGLE MESSAGE
+    // ============================================================
+    const handleDeleteMessage = async (messageIndex) => {
+        const msg = messages[messageIndex];
+        if (!msg || msg.type === 'bot' || !msg.id) return;
+        
+        if (!window.confirm('Delete this message and its response?')) return;
+        
+        try {
+            const token = getToken();
+            const response = await axios.delete(
+                `${API_URL}/chatbot/sessions/${currentSessionId}/messages/${msg.id}/delete/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            if (response.data.success) {
+                // Remove the user message and its bot response (if any)
+                const newMessages = [...messages];
+                // Check if next message is bot response
+                if (messageIndex + 1 < newMessages.length && newMessages[messageIndex + 1].type === 'bot') {
+                    newMessages.splice(messageIndex, 2);
+                } else {
+                    newMessages.splice(messageIndex, 1);
+                }
+                setMessages(newMessages);
+                await fetchSessions();
+            }
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            alert('Failed to delete message. Please try again.');
+        }
+    };
+
+    // ============================================================
+    // EDIT MESSAGE & REGENERATE
+    // ============================================================
+    const startEditing = (index) => {
+        const msg = messages[index];
+        if (!msg || msg.type !== 'user') return;
+        setEditingMessageIndex(index);
+        setEditText(msg.text);
+    };
+
+    const cancelEditing = () => {
+        setEditingMessageIndex(null);
+        setEditText('');
+    };
+
+    const handleEditMessage = async (messageIndex, newText) => {
+        if (!newText.trim()) return;
+        
+        const msg = messages[messageIndex];
+        console.log("Editing message:", msg);
+        console.log("Message ID:", msg.id);
+        console.log("New text:", newText);
+        
+        if (!msg || msg.type !== 'user' || !msg.id) {
+            console.log("Invalid message or missing ID");
+            return;
+        }
+        
+        try {
+            const token = getToken();
+            console.log("Sending PUT request to:", `${API_URL}/chatbot/sessions/${currentSessionId}/messages/${msg.id}/edit/`);
+            
+            const response = await axios.put(
+                `${API_URL}/chatbot/sessions/${currentSessionId}/messages/${msg.id}/edit/`,
+                { content: newText },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            console.log("Response:", response.data);
+            
+            if (response.data.success) {
+                const newMessages = [...messages];
+                // Update user message
+                newMessages[messageIndex] = {
+                    ...newMessages[messageIndex],
+                    text: response.data.user_message.content
+                };
+                // Replace or add bot response
+                if (messageIndex + 1 < newMessages.length && newMessages[messageIndex + 1].type === 'bot') {
+                    newMessages[messageIndex + 1] = {
+                        type: 'bot',
+                        text: response.data.assistant_message.content,
+                        schemes: response.data.assistant_message.schemes || []
+                    };
+                } else {
+                    newMessages.splice(messageIndex + 1, 0, {
+                        type: 'bot',
+                        text: response.data.assistant_message.content,
+                        schemes: response.data.assistant_message.schemes || []
+                    });
+                }
+                setMessages(newMessages);
+                setEditingMessageIndex(null);
+                setEditText('');
+                await fetchSessions();
+            } else {
+                alert(response.data.message || 'Failed to edit message');
+            }
+        } catch (error) {
+            console.error('Error editing message:', error);
+            console.error('Error response:', error.response?.data);
+            alert(error.response?.data?.error || 'Failed to edit message. Please try again.');
+        }
+    };
+
     // Switch session
     const switchSession = (sessionId) => {
         if (sessionId !== currentSessionId) {
+            setMessages([]);
+            setIsTyping(false);
+            setInput('');
+            setEditingMessageIndex(null);
             navigate(`/chatbot/session/${sessionId}`);
         }
         setIsSidebarOpen(false);
@@ -314,7 +477,10 @@ const ChatbotPage = () => {
     // Send message
     const handleSendMessage = async (text = null) => {
         const query = text || input.trim();
-        if (!query || isTyping || !currentSessionId) return;
+        
+        if (!query || isTyping || !currentSessionId) {
+            return;
+        }
 
         const userMessage = {
             type: 'user',
@@ -391,6 +557,22 @@ const ChatbotPage = () => {
         };
 
         init();
+    }, [sessionId]);
+
+    // Handle session switching from URL
+    useEffect(() => {
+        if (sessionId && sessionId !== currentSessionId) {
+            const loadSessionData = async () => {
+                const loaded = await loadSession(sessionId);
+                if (!loaded) {
+                    const newId = await createNewSession();
+                    if (newId) {
+                        navigate(`/chatbot/session/${newId}`);
+                    }
+                }
+            };
+            loadSessionData();
+        }
     }, [sessionId]);
 
     if (loading) {
@@ -505,17 +687,8 @@ const ChatbotPage = () => {
                                         <div className="chat-header-actions">
                                             <button 
                                                 className="clear-chat-btn"
-                                                onClick={() => {
-                                                    if (window.confirm('Clear all messages in this chat?')) {
-                                                        const welcomeMsg = {
-                                                            type: 'bot',
-                                                            text: "Hello! I'm your trusted AI guide. Ask me about any government scheme — I'll provide accurate, verified details.",
-                                                            chips: ['Housing', 'Farmer', 'Health', 'Education']
-                                                        };
-                                                        setMessages([welcomeMsg]);
-                                                    }
-                                                }}
-                                                title="Clear chat"
+                                                onClick={handleClearChat}
+                                                title="Clear all messages"
                                             >
                                                 <i className="fas fa-eraser"></i>
                                             </button>
@@ -543,12 +716,60 @@ const ChatbotPage = () => {
                                                             style={{ marginRight: '8px', color: 'var(--secondary)' }}
                                                         ></i>
                                                     )}
-                                                    <span>
-                                                        {typeof msg.text === 'object' 
-                                                            ? JSON.stringify(msg.text.answer) 
-                                                            : <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-                                                        }
-                                                    </span>
+                                                    
+                                                    {editingMessageIndex === i && msg.type === 'user' ? (
+                                                        <div className="edit-message-container">
+                                                            <textarea
+                                                                className="edit-textarea"
+                                                                value={editText}
+                                                                onChange={(e) => setEditText(e.target.value)}
+                                                                rows={3}
+                                                                autoFocus
+                                                            />
+                                                            <div className="edit-actions">
+                                                                <button
+                                                                    className="edit-save-btn"
+                                                                    onClick={() => handleEditMessage(i, editText)}
+                                                                >
+                                                                    <i className="fas fa-check"></i> Save
+                                                                </button>
+                                                                <button
+                                                                    className="edit-cancel-btn"
+                                                                    onClick={cancelEditing}
+                                                                >
+                                                                    <i className="fas fa-times"></i> Cancel
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <span>
+                                                                {typeof msg.text === 'object' 
+                                                                    ? JSON.stringify(msg.text.answer) 
+                                                                    : <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                                                                }
+                                                            </span>
+                                                            {msg.type === 'user' && (
+                                                                <div className="message-actions">
+                                                                    <button
+                                                                        className="msg-action-btn edit-btn"
+                                                                        onClick={() => startEditing(i)}
+                                                                        title="Edit message"
+                                                                    >
+                                                                        <i className="fas fa-pen"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        className="msg-action-btn delete-btn"
+                                                                        onClick={() => handleDeleteMessage(i)}
+                                                                        title="Delete message"
+                                                                    >
+                                                                        <i className="fas fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                    
                                                     {msg.chips && msg.chips.length > 0 && (
                                                         <div className="suggestion-chips-max">
                                                             {msg.chips.map((chip, j) => (
@@ -580,10 +801,17 @@ const ChatbotPage = () => {
                                             type="text"
                                             value={input}
                                             onChange={(e) => setInput(e.target.value)}
-                                            placeholder="Type your query..."
-                                            disabled={isTyping}
+                                            placeholder={
+                                                !currentSessionId 
+                                                    ? "Select or create a chat to start..." 
+                                                    : isTyping 
+                                                        ? "Wait for response..." 
+                                                        : "Type your query..."
+                                            }
+                                            disabled={isTyping || !currentSessionId}
                                             onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                    e.preventDefault();
                                                     handleSendMessage();
                                                 }
                                             }}
@@ -591,7 +819,7 @@ const ChatbotPage = () => {
                                         <button 
                                             onClick={() => handleSendMessage()} 
                                             aria-label="Send Message"
-                                            disabled={isTyping || !input.trim()}
+                                            disabled={isTyping || !input.trim() || !currentSessionId}
                                         >
                                             <i className="fas fa-paper-plane"></i>
                                         </button>
