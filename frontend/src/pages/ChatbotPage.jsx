@@ -37,6 +37,15 @@ const ChatbotPage = () => {
     const [editingMessageIndex, setEditingMessageIndex] = useState(null);
     const [editText, setEditText] = useState('');
     
+    // ============================================================
+    // IMAGE UPLOAD STATES
+    // ============================================================
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [location, setLocation] = useState('');
+    const [imageAnalysisMode, setImageAnalysisMode] = useState(false);
+    const fileInputRef = useRef(null);
+    
     const messagesEndRef = useRef(null);
     const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
@@ -50,6 +59,143 @@ const ChatbotPage = () => {
 
     // Get auth token
     const getToken = () => localStorage.getItem('token');
+
+    // ============================================================
+    // COPY FUNCTION
+    // ============================================================
+    const handleCopyText = (text) => {
+        navigator.clipboard.writeText(text).then(() => {
+            // Show feedback
+            const copyBtn = document.activeElement;
+            if (copyBtn) {
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                }, 2000);
+            }
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy. Please select and copy manually.');
+        });
+    };
+
+    // ============================================================
+    // IMAGE UPLOAD FUNCTIONS
+    // ============================================================
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            setImageAnalysisMode(true);
+        }
+    };
+
+    const handleSendImage = async () => {
+        if (!selectedImage || !currentSessionId) return;
+
+        // Add user message with image preview
+        const userMessage = {
+            type: 'user',
+            text: input || "Analyze this image",
+            image: imagePreview, // Store image preview
+            isImage: true
+        };
+        setMessages(prev => [...prev, userMessage]);
+
+        setIsTyping(true);
+        setImageAnalysisMode(false);
+
+        try {
+            const token = getToken();
+            const reader = new FileReader();
+            
+            reader.onloadend = async () => {
+                const base64Image = reader.result;
+                
+                const response = await axios.post(
+                    `${API_URL}/chatbot/sessions/${currentSessionId}/send/`,
+                    {
+                        query: input || "Analyze this image",
+                        image: base64Image,
+                        location: location || "Unknown Location",
+                        prompt: input || "Please analyze this image"
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.data.success) {
+                    const botMessage = {
+                        type: 'bot',
+                        text: response.data.message.content,
+                        isImageAnalysis: response.data.message.is_image_analysis || false,
+                        emailData: response.data.message.email_data || null,
+                        prediction: response.data.message.prediction || null
+                    };
+                    setMessages(prev => [...prev, botMessage]);
+                    setSelectedImage(null);
+                    setImagePreview(null);
+                    setLocation('');
+                    setImageAnalysisMode(false);
+                    setInput('');
+                    await fetchSessions();
+                }
+            };
+            
+            reader.readAsDataURL(selectedImage);
+        } catch (error) {
+            console.error('Error sending image:', error);
+            const botMessage = {
+                type: 'bot',
+                text: error.response?.data?.error || 'Failed to analyze image. Please try again.'
+            };
+            setMessages(prev => [...prev, botMessage]);
+            setImageAnalysisMode(false);
+        } finally {
+            setIsTyping(false);
+        }
+    };
+
+    // ============================================================
+    // EMAIL FUNCTIONS
+    // ============================================================
+    const handleSendEmail = async (emailData) => {
+        try {
+            const token = getToken();
+            const response = await axios.post(
+                `${API_URL}/chatbot/send-email/`,
+                {
+                    email: emailData,
+                    recipient: 'municipalcorporation@example.com'
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (response.data.success) {
+                alert('✅ Email sent successfully!');
+            } else {
+                alert('Failed to send email. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+            alert('Failed to send email. Please try again.');
+        }
+    };
 
     // Format date for sidebar
     const formatDate = (dateStr) => {
@@ -131,7 +277,7 @@ const ChatbotPage = () => {
         }
     };
 
-    // Load session messages - FIXED: ensure IDs are stored
+    // Load session messages
     const loadSession = async (sessionId) => {
         try {
             const token = getToken();
@@ -146,7 +292,7 @@ const ChatbotPage = () => {
                 console.log("📋 Session data:", session);
                 
                 const formattedMessages = session.messages.map(msg => ({
-                    id: msg.id,  // ✅ Store the ID
+                    id: msg.id,
                     type: msg.role === 'user' ? 'user' : 'bot',
                     text: msg.content,
                     schemes: msg.schemes || [],
@@ -365,9 +511,7 @@ const ChatbotPage = () => {
             );
             
             if (response.data.success) {
-                // Remove the user message and its bot response (if any)
                 const newMessages = [...messages];
-                // Check if next message is bot response
                 if (messageIndex + 1 < newMessages.length && newMessages[messageIndex + 1].type === 'bot') {
                     newMessages.splice(messageIndex, 2);
                 } else {
@@ -429,12 +573,10 @@ const ChatbotPage = () => {
             
             if (response.data.success) {
                 const newMessages = [...messages];
-                // Update user message
                 newMessages[messageIndex] = {
                     ...newMessages[messageIndex],
                     text: response.data.user_message.content
                 };
-                // Replace or add bot response
                 if (messageIndex + 1 < newMessages.length && newMessages[messageIndex + 1].type === 'bot') {
                     newMessages[messageIndex + 1] = {
                         type: 'bot',
@@ -743,12 +885,39 @@ const ChatbotPage = () => {
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <span>
-                                                                {typeof msg.text === 'object' 
-                                                                    ? JSON.stringify(msg.text.answer) 
-                                                                    : <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-                                                                }
-                                                            </span>
+                                                            <div className="message-content">
+                                                                {/* Show image preview for user messages */}
+                                                                {msg.type === 'user' && msg.image && (
+                                                                    <div className="message-image-preview">
+                                                                        <img 
+                                                                            src={msg.image} 
+                                                                            alt="Uploaded" 
+                                                                            className="message-image"
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                                <span>
+                                                                    {typeof msg.text === 'object' 
+                                                                        ? JSON.stringify(msg.text.answer) 
+                                                                        : <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                            
+                                                            {/* Copy button for bot messages */}
+                                                            {msg.type === 'bot' && (
+                                                                <div className="message-actions">
+                                                                    <button
+                                                                        className="msg-action-btn copy-btn"
+                                                                        onClick={() => handleCopyText(msg.text)}
+                                                                        title="Copy message"
+                                                                    >
+                                                                        <i className="fas fa-copy"></i> Copy
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                            
+                                                            {/* Edit/Delete for user messages */}
                                                             {msg.type === 'user' && (
                                                                 <div className="message-actions">
                                                                     <button
@@ -797,32 +966,80 @@ const ChatbotPage = () => {
                                     </div>
 
                                     <div className="chatbot-input-area-max">
-                                        <input
-                                            type="text"
-                                            value={input}
-                                            onChange={(e) => setInput(e.target.value)}
-                                            placeholder={
-                                                !currentSessionId 
-                                                    ? "Select or create a chat to start..." 
-                                                    : isTyping 
-                                                        ? "Wait for response..." 
-                                                        : "Type your query..."
-                                            }
-                                            disabled={isTyping || !currentSessionId}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                    e.preventDefault();
-                                                    handleSendMessage();
-                                                }
-                                            }}
-                                        />
-                                        <button 
-                                            onClick={() => handleSendMessage()} 
-                                            aria-label="Send Message"
-                                            disabled={isTyping || !input.trim() || !currentSessionId}
-                                        >
-                                            <i className="fas fa-paper-plane"></i>
-                                        </button>
+                                        {!imageAnalysisMode ? (
+                                            <>
+                                                <input
+                                                    type="text"
+                                                    value={input}
+                                                    onChange={(e) => setInput(e.target.value)}
+                                                    placeholder={
+                                                        !currentSessionId 
+                                                            ? "Select or create a chat to start..." 
+                                                            : isTyping 
+                                                                ? "Wait for response..." 
+                                                                : "Type your query or upload an image..."
+                                                    }
+                                                    disabled={isTyping || !currentSessionId}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                                            e.preventDefault();
+                                                            handleSendMessage();
+                                                        }
+                                                    }}
+                                                />
+                                                <button 
+                                                    className="upload-image-btn"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    title="Upload image for analysis"
+                                                    disabled={!currentSessionId || isTyping}
+                                                >
+                                                    <i className="fas fa-image"></i>
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    onChange={handleImageUpload}
+                                                    accept="image/*"
+                                                    style={{ display: 'none' }}
+                                                />
+                                                <button 
+                                                    onClick={() => handleSendMessage()} 
+                                                    aria-label="Send Message"
+                                                    disabled={isTyping || !input.trim() || !currentSessionId}
+                                                >
+                                                    <i className="fas fa-paper-plane"></i>
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="image-preview-container">
+                                                <img src={imagePreview} alt="Preview" className="image-preview-thumb" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Location..."
+                                                    value={location}
+                                                    onChange={(e) => setLocation(e.target.value)}
+                                                    className="location-input"
+                                                />
+                                                <button 
+                                                    className="send-image-btn"
+                                                    onClick={handleSendImage}
+                                                    disabled={isTyping}
+                                                >
+                                                    <i className="fas fa-paper-plane"></i>
+                                                </button>
+                                                <button 
+                                                    className="cancel-image-btn"
+                                                    onClick={() => {
+                                                        setSelectedImage(null);
+                                                        setImagePreview(null);
+                                                        setImageAnalysisMode(false);
+                                                        setLocation('');
+                                                    }}
+                                                >
+                                                    <i className="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

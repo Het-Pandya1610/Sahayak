@@ -1208,3 +1208,225 @@
 [data-theme="dark"] .no-sessions span {
     color: var(--gray-600);
 }
+
+/* ============================================================
+   IMAGE PREVIEW IN MESSAGES
+   ============================================================ */
+.message-content {
+    width: 100%;
+}
+
+.message-image-preview {
+    margin-bottom: 10px;
+}
+
+.message-image {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 8px;
+    border: 1px solid var(--lotus-border);
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .message-image {
+    border-color: var(--gray-700);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================================
+   COPY BUTTON FOR BOT MESSAGES
+   ============================================================ */
+.copy-btn {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.copy-btn:hover {
+    color: #93c5fd;
+}
+
+/* Show message actions on hover for both user and bot messages */
+.max-msg:hover .message-actions {
+    opacity: 1;
+}
+
+/* Message actions - updated for bot messages */
+.message-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.max-msg:hover .message-actions {
+    opacity: 1;
+}
+
+.msg-action-btn {
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.max-msg.user .msg-action-btn {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.max-msg.user .msg-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.max-msg.bot .msg-action-btn {
+    color: var(--gray-500);
+}
+
+.max-msg.bot .msg-action-btn:hover {
+    background: var(--gray-200);
+    color: var(--primary);
+}
+
+[data-theme="dark"] .max-msg.bot .msg-action-btn {
+    color: var(--gray-400);
+}
+
+[data-theme="dark"] .max-msg.bot .msg-action-btn:hover {
+    background: var(--gray-700);
+    color: var(--gray-200);
+}
+
+.msg-action-btn.edit-btn:hover {
+    color: #93c5fd !important;
+}
+
+.msg-action-btn.delete-btn:hover {
+    color: #fca5a5 !important;
+}
+
+.msg-action-btn.copy-btn:hover {
+    color: #93c5fd !important;
+}
+
+/* Copy feedback animation */
+.msg-action-btn.copied {
+    color: #4ade80 !important;
+}
+
+/* ============================================================
+   IMAGE UPLOAD PREVIEW IN INPUT
+   ============================================================ */
+.image-preview-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 8px;
+    background: var(--gray-100);
+    border-radius: 25px;
+    border: 1px solid var(--lotus-border);
+}
+
+.image-preview-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--lotus-border);
+}
+
+.location-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+.location-input::placeholder {
+    color: var(--gray-400);
+}
+
+.send-image-btn,
+.cancel-image-btn {
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.send-image-btn {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+.send-image-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.send-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancel-image-btn {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.cancel-image-btn:hover {
+    background: #fecaca;
+    transform: scale(1.05);
+}
+
+.upload-image-btn {
+    background: transparent;
+    border: none;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.upload-image-btn:hover {
+    color: var(--secondary);
+    transform: scale(1.1);
+}
+
+.upload-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+[data-theme="dark"] .image-preview-container {
+    background: var(--gray-800);
+    border-color: var(--gray-700);
+}
+
+[data-theme="dark"] .cancel-image-btn {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .cancel-image-btn:hover {
+    background: #991b1b;
+}
+

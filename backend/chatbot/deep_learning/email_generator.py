@@ -3,171 +3,134 @@ import json
 
 class EmailGenerator:
     def __init__(self):
-        # Municipal corporation email templates
         self.templates = {
-            'pothole': {
-                'subject': 'URGENT: Pothole Issue at {location} - Immediate Action Required',
-                'body': """
+            "pothole": {
+                "subject": "URGENT: Pothole Issue at {location} - Immediate Action Required",
+                "body": """
+# Pothole Complaint Report
+
 Dear Municipal Corporation Team,
 
-I am writing to bring to your immediate attention a serious pothole issue at the following location:
+I hope this message finds you well.
 
-📍 Location: {location}
-📅 Date Reported: {date}
-⚠️ Severity Level: {severity}
+I would like to report a pothole that requires immediate attention as it poses a risk to public safety.
 
-Details of the Issue:
-A significant pothole has been observed at the above-mentioned location. This poses a serious safety hazard to:
-- Vehicles passing through the area
-- Pedestrians, especially during nighttime
-- Two-wheeler riders
+---
 
-The condition of the road is deteriorating rapidly and requires immediate intervention to prevent:
-• Vehicle damage
-• Traffic accidents
-• Injury to pedestrians
+## Complaint Details
 
-Request for Action:
-1. Immediate site inspection
-2. Installation of warning signs/barricades
-3. Prompt repair of the pothole
-4. Follow-up maintenance to prevent recurrence
+| Field | Information |
+|-------|-------------|
+| **Location** | {location} |
+| **Date Reported** | {date} |
+| **Severity Level** | {severity} |
 
-Please find attached an image of the pothole for your reference.
+---
 
-I request you to kindly look into this matter on an urgent basis and take necessary action.
+## Issue Description
 
-For any further details, please contact me.
+A significant pothole has been observed at the above-mentioned location. The damaged road surface has become hazardous for commuters and may lead to accidents if not repaired promptly.
 
-Regards,
-{user_name}
-Contact: {user_contact}
-Email: {user_email}
+---
+
+## Safety Concerns
+
+- Risk of accidents for two-wheelers and four-wheelers.
+- Danger to pedestrians, especially during nighttime.
+- Increased traffic congestion due to vehicles avoiding the damaged section.
+- Possibility of further road deterioration if left unattended.
+
+---
+
+## Requested Action
+
+Kindly take the following actions at the earliest:
+
+1. Conduct an immediate site inspection.
+2. Install temporary warning signs or barricades.
+3. Repair and restore the damaged road surface.
+4. Ensure the repaired section is safe for public use.
+
+---
+
+## Attachment
+
+An image of the pothole has been attached to assist in identifying the exact issue and location.
+
+---
+
+Thank you for your prompt attention to this matter. I look forward to your timely response and necessary action.
 """
             },
-            'garbage': {
-                'subject': 'URGENT: Waste Accumulation at {location} - Health Hazard Alert',
-                'body': """
+
+            "garbage": {
+                "subject": "URGENT: Waste Accumulation at {location} - Health Hazard Alert",
+                "body": """
+# Waste Accumulation Complaint
+
 Dear Municipal Corporation Team,
 
-I am writing to report a serious waste accumulation issue that poses significant health and environmental hazards at:
+I hope you are doing well.
 
-📍 Location: {location}
-📅 Date Reported: {date}
-⚠️ Severity Level: {severity}
+I wish to report a serious waste accumulation issue that requires urgent intervention due to its impact on public health and sanitation.
 
-Issue Description:
-There is an alarming accumulation of garbage/waste at the above-mentioned location. The situation is critical due to:
+---
 
-Health Hazards:
-• Breeding ground for disease-carrying vectors
-• Risk of waterborne diseases
-• Air pollution from decomposing waste
-• Potential for rodent infestation
+## Complaint Details
 
-Environmental Impact:
-• Visual pollution affecting the area
-• Soil contamination
-• Water source pollution
-• Odor nuisance
+| Field | Information |
+|-------|-------------|
+| **Location** | {location} |
+| **Date Reported** | {date} |
+| **Severity Level** | {severity} |
 
-Request for Immediate Action:
-1. Emergency cleanup of the accumulated waste
-2. Installation of adequate waste bins
-3. Regular waste collection schedule
-4. Public awareness about waste disposal
+---
 
-Please find attached an image showing the current condition of the site.
+## Issue Description
 
-I urge you to take immediate action to resolve this issue and prevent further environmental degradation.
+A large amount of garbage has accumulated at the above-mentioned location. The waste has remained unattended for an extended period, creating an unhygienic environment for nearby residents and commuters.
 
-Regards,
-{user_name}
-Contact: {user_contact}
-Email: {user_email}
-"""
-            },
-            'water_logging': {
-                'subject': 'URGENT: Water Logging Issue at {location} - Flood Risk Alert',
-                'body': """
-Dear Municipal Corporation Team,
+---
 
-I am writing to urgently report severe water logging at the following location:
+## Health & Environmental Concerns
 
-📍 Location: {location}
-📅 Date Reported: {date}
-⚠️ Severity Level: {severity}
+- Increased risk of mosquito and insect breeding.
+- Possibility of waterborne and vector-borne diseases.
+- Foul odor affecting nearby residential and commercial areas.
+- Environmental pollution and reduced public cleanliness.
 
-Critical Situation:
-The area is experiencing severe water logging due to:
-• Blocked drainage systems
-• Insufficient drainage capacity
-• Recent rainfall accumulation
+---
 
-Consequences:
-• Disruption of daily life and commute
-• Risk of waterborne diseases
-• Property damage
-• Traffic congestion
-• Safety hazard for pedestrians
+## Requested Action
 
-Request for Immediate Intervention:
-1. Emergency drainage clearance
-2. Inspection of drainage infrastructure
-3. Installation of additional drainage facilities
-4. Regular maintenance of drainage systems
+Kindly arrange for the following actions as soon as possible:
 
-Please find attached an image showing the current water logging situation.
+1. Immediate removal of the accumulated waste.
+2. Cleaning and sanitization of the affected area.
+3. Installation of adequate waste collection bins.
+4. Regular monitoring and scheduled waste collection.
 
-I request your urgent intervention to prevent this situation from escalating and causing widespread disruption.
+---
 
-Regards,
-{user_name}
-Contact: {user_contact}
-Email: {user_email}
-"""
-            },
-            'other': {
-                'subject': 'Infrastructure Issue Report at {location}',
-                'body': """
-Dear Municipal Corporation Team,
+## Attachment
 
-I am writing to report an infrastructure issue that requires your attention at:
+An image of the affected location has been attached for your reference.
 
-📍 Location: {location}
-📅 Date Reported: {date}
+---
 
-Issue Description:
-An infrastructure issue has been observed at the above location that needs to be addressed.
-
-Request for Action:
-1. Site inspection
-2. Assessment of the issue
-3. Necessary repairs/action
-4. Follow-up
-
-Please find attached an image of the issue for your reference.
-
-I request you to kindly look into this matter and take appropriate action.
-
-Regards,
-{user_name}
-Contact: {user_contact}
-Email: {user_email}
+Thank you for your attention to this matter. I would appreciate prompt action to resolve this issue in the interest of public health and safety.
 """
             }
         }
     
     def generate_email(self, prediction_result, user_data, location, custom_prompt=None):
-        """Generate a professional email based on prediction and user data"""
+        issue_type = prediction_result.get('class', 'garbage')
+        # If prediction is not pothole or garbage, default to garbage
+        if issue_type not in self.templates:
+            issue_type = 'garbage'
         
-        # Determine the issue type
-        issue_type = prediction_result.get('class', 'other')
+        template_data = self.templates.get(issue_type, self.templates['garbage'])
         
-        # Get the appropriate template
-        template_data = self.templates.get(issue_type, self.templates['other'])
-        
-        # Calculate severity level
         severity_score = prediction_result.get('severity', 0.5)
         if severity_score > 0.7:
             severity = 'HIGH (Immediate Action Required)'
@@ -176,7 +139,6 @@ Email: {user_email}
         else:
             severity = 'LOW (Action Required Soon)'
         
-        # Format the email
         email_data = {
             'subject': template_data['subject'].format(
                 location=location,
@@ -197,14 +159,12 @@ Email: {user_email}
             'confidence': prediction_result.get('confidence', 0.0)
         }
         
-        # If custom prompt is provided, incorporate it
         if custom_prompt:
             email_data['custom_notes'] = custom_prompt
         
         return email_data
     
     def generate_response(self, email_data):
-        """Generate a JSON response for the API"""
         return {
             'success': True,
             'email': {

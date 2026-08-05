@@ -191,7 +191,7 @@ def chat_session_delete(request, session_id):
 
 @csrf_exempt
 def chat_message_send(request, session_id):
-    """Send a message in a chat session"""
+    """Send a message or image in a chat session"""
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
@@ -211,7 +211,90 @@ def chat_message_send(request, session_id):
     try:
         body = json.loads(request.body)
         query = body.get('query', '')
+        image_data = body.get('image', None)
+        location = body.get('location', '')
+        user_prompt = body.get('prompt', '')
         
+        # Check if this is an image analysis request
+        if image_data:
+            # Process image
+            print("📸 Processing image from chat...")
+            prediction = image_processor.predict(image_data)
+            print(f"Prediction: {prediction}")
+            
+            # Extract features for severity assessment
+            features = image_processor.extract_features(image_data)
+            severity_score = image_processor.assess_severity(prediction, features)
+            prediction['severity'] = severity_score
+            
+            # Get user data from token
+            user_data = {
+                'name': 'Citizen',
+                'contact': 'N/A',
+                'email': 'N/A'
+            }
+            
+            # Generate email
+            email_data = email_generator.generate_email(
+                prediction_result=prediction,
+                user_data=user_data,
+                location=location or 'Unknown Location',
+                custom_prompt=user_prompt or query
+            )
+            
+            # Save user message (the prompt or query)
+            user_message = ChatMessage(
+                session=session,
+                role='user',
+                content=query or f"Analyze this image: {location}",
+                created_at=datetime.utcnow()
+            )
+            user_message.save()
+            
+            # Save assistant message with image analysis result
+            assistant_response = f"""📸 **Image Analysis Result**
+
+**Issue Type:** {email_data['issue_type'].replace('_', ' ').upper()}
+**Confidence:** {(prediction.get('confidence', 0) * 100):.1f}%
+**Severity:** {email_data['severity']}
+**Location:** {location or 'Unknown'}
+
+**Generated Email:**
+{email_data['body']}
+
+**Subject:** {email_data['subject']}
+
+Would you like me to send this email? (Reply with 'yes' to send)"""
+            
+            assistant_message = ChatMessage(
+                session=session,
+                role='assistant',
+                content=assistant_response,
+                schemes=[],  # No schemes, it's an image analysis
+                created_at=datetime.utcnow()
+            )
+            assistant_message.save()
+            
+            # Store email data in session for later use
+            # We'll save it in a temporary field or you can create a new model
+            session.title = f"Image Analysis: {email_data['issue_type']}"
+            session.updated_at = datetime.utcnow()
+            session.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': {
+                    'id': str(assistant_message.id),
+                    'role': assistant_message.role,
+                    'content': assistant_message.content,
+                    'schemes': [],
+                    'is_image_analysis': True,
+                    'email_data': email_data,
+                    'prediction': prediction
+                }
+            })
+        
+        # Regular text message flow
         if not query:
             return JsonResponse({'error': 'Query is required'}, status=400)
         
@@ -262,7 +345,8 @@ def chat_message_send(request, session_id):
                 'role': assistant_message.role,
                 'content': assistant_message.content,
                 'schemes': assistant_message.schemes,
-                'created_at': assistant_message.created_at.isoformat()
+                'created_at': assistant_message.created_at.isoformat(),
+                'is_image_analysis': False
             }
         })
         

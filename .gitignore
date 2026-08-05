@@ -36,6 +36,10 @@ __pycache__
 
 models/
 
+backend/datasets/municipal_issues/
+
+backend/chatbot/deep_learning/model_weights.pth
+
 # virtual env
 venv
 
