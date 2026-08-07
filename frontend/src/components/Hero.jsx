@@ -7,7 +7,13 @@ const Hero = ({ onSearch, showContent }) => {
     const handleSearch = (e) => {
         if (e.key === 'Enter' || e.type === 'click') {
             if (inputValue.trim()) {
-                onSearch(inputValue.trim());
+                // Navigate to schemes page with search query
+                navigate(`/schemes?search=${encodeURIComponent(inputValue.trim())}`);
+                
+                // Also call the onSearch callback if provided
+                if (onSearch) {
+                    onSearch(inputValue.trim());
+                }
             }
         }
     };
@@ -50,7 +56,7 @@ const Hero = ({ onSearch, showContent }) => {
                         Stop misinformation. Our AI chatbot provides accurate, verified scheme details — in simple language.
                     </motion.p>
                     
-                    <motion.div className="hero-search" variants={itemVariants}>
+                    {/* <motion.div className="hero-search" variants={itemVariants}>
                         <input 
                             type="text" 
                             placeholder="e.g., housing, farmer benefits..." 
@@ -61,11 +67,11 @@ const Hero = ({ onSearch, showContent }) => {
                         <button onClick={handleSearch} className="search-btn">
                             <i className="fas fa-search"></i> Search
                         </button>
-                    </motion.div>
+                    </motion.div> */}
 
                     <motion.div className="hero-stats" variants={itemVariants}>
                         <div className="hero-stat">
-                            <span className="stat-number"><i className="fas fa-check-circle"></i> 200+</span>
+                            <span className="stat-number"><i className="fas fa-check-circle"></i> 3000+</span>
                             <span className="stat-label">Active Schemes</span>
                         </div>
                         <div className="hero-stat">

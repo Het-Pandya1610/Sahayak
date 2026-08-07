@@ -1326,50 +1326,34 @@
    ============================================================ */
 .image-preview-container {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
-    padding: 4px 8px;
+    padding: 12px;
     background: var(--gray-100);
-    border-radius: 25px;
-    border: 1px solid var(--lotus-border);
+    border-radius: 12px;
 }
 
 .image-preview-thumb {
-    width: 40px;
-    height: 40px;
-    border-radius: 6px;
-    object-fit: cover;
-    border: 1px solid var(--lotus-border);
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: var(--gray-200);
 }
 
-.location-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 6px 10px;
-    font-size: 13px;
-    outline: none;
-    color: var(--text-color);
-    font-family: inherit;
-}
-
-.location-input::placeholder {
-    color: var(--gray-400);
+.image-preview-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .send-image-btn,
 .cancel-image-btn {
+    padding: 8px 16px;
     border: none;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
+    border-radius: 6px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
+    font-size: 14px;
+    transition: all var(--transition-theme);
 }
 
 .send-image-btn {
@@ -1387,28 +1371,13 @@
 }
 
 .cancel-image-btn {
-    background: #fee2e2;
-    color: #dc2626;
+    background: var(--gray-300);
+    color: var(--gray-700);
 }
 
 .cancel-image-btn:hover {
-    background: #fecaca;
-    transform: scale(1.05);
-}
-
-.upload-image-btn {
-    background: transparent;
-    border: none;
-    color: var(--gray-500);
-    cursor: pointer;
-    padding: 8px 12px;
-    font-size: 18px;
-    transition: all 0.3s ease;
-}
-
-.upload-image-btn:hover {
-    color: var(--secondary);
-    transform: scale(1.1);
+    background: var(--danger);
+    color: var(--white);
 }
 
 .upload-image-btn:disabled {

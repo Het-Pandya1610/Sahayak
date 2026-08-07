@@ -248,12 +248,12 @@ function Home() {
           <CTABanner onOpenChatbot={() => openChatbot()} />
         </main>
       </motion.div>
-      <Chatbot
+      {/* <Chatbot
         isOpen={isChatbotOpen}
         onOpen={openChatbot}
         onClose={closeChatbot}
         initialQuery={chatbotQuery}
-      />
+      /> */}
       <Footer theme={theme} />
     </div>
   );

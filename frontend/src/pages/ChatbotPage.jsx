@@ -9,6 +9,7 @@ import RenameModal from '../components/RenameModal';
 import './css/ChatbotPage.css';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import LocationPicker from '../components/LocationPicker';
 
 const ChatbotPage = () => {
     const navigate = useNavigate();
@@ -1013,31 +1014,35 @@ const ChatbotPage = () => {
                                         ) : (
                                             <div className="image-preview-container">
                                                 <img src={imagePreview} alt="Preview" className="image-preview-thumb" />
-                                                <input
-                                                    type="text"
-                                                    placeholder="Location..."
-                                                    value={location}
-                                                    onChange={(e) => setLocation(e.target.value)}
-                                                    className="location-input"
-                                                />
-                                                <button 
-                                                    className="send-image-btn"
-                                                    onClick={handleSendImage}
-                                                    disabled={isTyping}
-                                                >
-                                                    <i className="fas fa-paper-plane"></i>
-                                                </button>
-                                                <button 
-                                                    className="cancel-image-btn"
-                                                    onClick={() => {
-                                                        setSelectedImage(null);
-                                                        setImagePreview(null);
-                                                        setImageAnalysisMode(false);
-                                                        setLocation('');
+                                                
+                                                <LocationPicker 
+                                                    onLocationSelect={(address, coords) => {
+                                                        setLocation(address);
+                                                        console.log('Location:', address, coords);
                                                     }}
-                                                >
-                                                    <i className="fas fa-times"></i>
-                                                </button>
+                                                    initialLocation={location}
+                                                />
+                                                
+                                                <div className="image-preview-actions">
+                                                    <button 
+                                                        className="send-image-btn"
+                                                        onClick={handleSendImage}
+                                                        disabled={isTyping || !location}
+                                                    >
+                                                        <i className="fas fa-paper-plane"></i>
+                                                    </button>
+                                                    <button 
+                                                        className="cancel-image-btn"
+                                                        onClick={() => {
+                                                            setSelectedImage(null);
+                                                            setImagePreview(null);
+                                                            setImageAnalysisMode(false);
+                                                            setLocation('');
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-times"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

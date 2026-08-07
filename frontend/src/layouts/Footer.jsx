@@ -21,7 +21,6 @@ const Footer = ({ theme }) => {
                     <h4>Quick Links</h4>
                     <ul>
                         <li><Link to="/schemes">All Schemes</Link></li>
-                        <li><Link to="#">Chatbot Guide</Link></li>
                         <li><Link to="/faq">FAQ</Link></li>
                         <li><Link to="/resources">Official Sources</Link></li>
                     </ul>
@@ -31,7 +30,6 @@ const Footer = ({ theme }) => {
                     <ul>
                         <li><Link to="/contact">Contact Us</Link></li>
                         <li><Link to="/report-misinformation">Report Misinformation</Link></li>
-                        <li><Link to="#">Feedback</Link></li>
                     </ul>
                 </div>
                 <div className="footer-col">

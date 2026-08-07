@@ -55,8 +55,9 @@
     font-size: 1.08rem;
     color: var(--gray-700);
     text-align: left;
-    max-width: 850px;
+    width: 100%;
     line-height: 1.9;
+    text-align: justify;
 }
 
 .application-process p{

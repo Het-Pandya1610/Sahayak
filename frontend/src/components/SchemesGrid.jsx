@@ -68,7 +68,7 @@ const SchemesGrid = ({ onSchemeClick }) => {
                         <p>{scheme.desc}</p>
                         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <span className="card-badge">{scheme.badge}</span>
-                            <span className="card-link">Learn More <i className="fas fa-arrow-right"></i></span>
+                            {/* <span className="card-link">Learn More <i className="fas fa-arrow-right"></i></span> */}
                         </div>
                     </div>
                 ))}
