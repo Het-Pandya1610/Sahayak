@@ -316,7 +316,7 @@ Would you like me to send this email? (Reply with 'yes' to send)"""
             })
         
         # Call chatbot pipeline
-        response = chatbot_pipeline(query, history)
+        response = chatbot_pipeline(query, history, session_id=session_id)
         
         # Save assistant message
         assistant_message = ChatMessage(

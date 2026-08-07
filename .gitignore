@@ -43,6 +43,8 @@ backend/chatbot/deep_learning/model_weights.pth
 # virtual env
 venv
 
+backend/chatbot/ai/memory/storage/
+
 vectorstore
 
 # sqlite database
