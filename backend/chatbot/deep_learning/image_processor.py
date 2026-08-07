@@ -38,27 +38,57 @@ class ImageProcessor:
         """Load trained model - MATCHES YOUR TRAINING ARCHITECTURE"""
         try:
             # ============================================================
-            # FIXED: Use ResNet18 with 2 classes (matches your training!)
+            # FIXED: Use ResNet18 with same architecture as training
             # ============================================================
-            self.model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-            num_features = self.model.fc.in_features
-            self.model.fc = nn.Linear(num_features, 2)  # 2 classes
+            model = models.resnet18(weights=None)
             
-            # Load custom weights
+            # Freeze all layers (matching training)
+            for param in model.parameters():
+                param.requires_grad = False
+            
+            # Same classifier as training (with dropout and batch norm)
+            num_features = model.fc.in_features
+            model.fc = nn.Sequential(
+                nn.Dropout(0.6),
+                nn.Linear(num_features, 64),
+                nn.ReLU(),
+                nn.BatchNorm1d(64),
+                nn.Dropout(0.48),
+                nn.Linear(64, 32),
+                nn.ReLU(),
+                nn.BatchNorm1d(32),
+                nn.Dropout(0.36),
+                nn.Linear(32, 2)
+            )
+            
+            # Load weights
             model_path = os.path.join(os.path.dirname(__file__), 'model_weights.pth')
             if os.path.exists(model_path):
-                state_dict = torch.load(model_path, map_location=self.device)
-                self.model.load_state_dict(state_dict)
-                logger.info("✅ Custom model weights loaded successfully")
-                self.model.to(self.device)
-                self.model.eval()
-                logger.info(f"Model loaded on {self.device}")
+                checkpoint = torch.load(model_path, map_location=self.device)
+                
+                # Extract model state dict from checkpoint
+                if 'model_state_dict' in checkpoint:
+                    state_dict = checkpoint['model_state_dict']
+                    val_acc = checkpoint.get('val_acc', 'unknown')
+                    epoch = checkpoint.get('epoch', 'unknown')
+                    logger.info(f"✅ Loading model from epoch {epoch} with val_acc: {val_acc}%")
+                else:
+                    state_dict = checkpoint
+                
+                # Load state dict
+                model.load_state_dict(state_dict)
+                model.to(self.device)
+                model.eval()
+                self.model = model
+                logger.info(f"✅ Model loaded successfully on {self.device}")
             else:
                 logger.warning(f"⚠️ No trained weights found at {model_path}")
                 self.model = None
             
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}")
+            import traceback
+            traceback.print_exc()
             self.model = None
     
     def preprocess_image(self, image):
@@ -83,6 +113,7 @@ class ImageProcessor:
         """Predict if image is garbage or pothole"""
         try:
             if self.model is None:
+                logger.warning("Model not loaded, using fallback")
                 return self._fallback_prediction(image)
             
             image_tensor = self.preprocess_image(image)
@@ -122,23 +153,61 @@ class ImageProcessor:
                 img = image
             
             img_array = np.array(img)
-            avg_color = np.mean(img_array, axis=(0, 1))
             
-            if avg_color[0] < 100 and avg_color[1] < 100 and avg_color[2] < 100:
-                return {'class': 'pothole', 'class_id': 1, 'confidence': 0.6, 'probabilities': {}}
-            elif np.std(img_array) > 50:
-                return {'class': 'garbage', 'class_id': 0, 'confidence': 0.6, 'probabilities': {}}
-            else:
-                return {'class': 'garbage', 'class_id': 0, 'confidence': 0.5, 'probabilities': {}}
+            # Simple heuristics
+            brightness = np.mean(img_array)
+            contrast = np.std(img_array)
+            
+            # Check for blue/dark areas (potential pothole)
+            if img_array.shape[2] == 3:
+                blue_channel = img_array[:, :, 2].mean()
+                if blue_channel < 100 and brightness < 100:
+                    return {
+                        'class': 'pothole', 
+                        'class_id': 1, 
+                        'confidence': 0.5, 
+                        'probabilities': {'garbage': 0.5, 'pothole': 0.5}
+                    }
+            
+            # Check for texture/variation (potential garbage)
+            if contrast > 80:
+                return {
+                    'class': 'garbage', 
+                    'class_id': 0, 
+                    'confidence': 0.5, 
+                    'probabilities': {'garbage': 0.6, 'pothole': 0.4}
+                }
+            
+            # Default
+            return {
+                'class': 'garbage', 
+                'class_id': 0, 
+                'confidence': 0.3, 
+                'probabilities': {'garbage': 0.5, 'pothole': 0.5}
+            }
                 
         except Exception as e:
             logger.error(f"Fallback prediction error: {str(e)}")
-            return {'class': 'garbage', 'class_id': 0, 'confidence': 0.3, 'probabilities': {}}
+            return {
+                'class': 'garbage', 
+                'class_id': 0, 
+                'confidence': 0.3, 
+                'probabilities': {'garbage': 0.5, 'pothole': 0.5}
+            }
     
     def extract_features(self, image):
         """Extract features from image for detailed analysis"""
         try:
-            img_array = np.array(image if not isinstance(image, str) else Image.open(image))
+            if isinstance(image, str):
+                if image.startswith('data:image'):
+                    image_data = base64.b64decode(image.split(',')[1])
+                    img = Image.open(BytesIO(image_data))
+                else:
+                    img = Image.open(image)
+            else:
+                img = image
+            
+            img_array = np.array(img)
             
             features = {
                 'width': img_array.shape[1],
@@ -158,18 +227,24 @@ class ImageProcessor:
     
     def _detect_edges(self, img_array):
         try:
-            gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+            if len(img_array.shape) == 3:
+                gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+            else:
+                gray = img_array
             edges = cv2.Canny(gray, 100, 200)
             edge_density = np.sum(edges > 0) / (edges.shape[0] * edges.shape[1])
-            return edge_density
+            return float(edge_density)
         except:
             return 0.0
     
     def assess_severity(self, prediction_result, features):
         """Assess severity based on prediction and features"""
         severity_score = 0.0
+        
+        # Confidence contributes to severity
         severity_score += prediction_result.get('confidence', 0.5) * 0.4
         
+        # Features contribute to severity
         if features:
             edge_density = features.get('edges', 0)
             if edge_density > 0.3:
@@ -180,6 +255,7 @@ class ImageProcessor:
             brightness = features.get('brightness', 128)
             if brightness < 80:
                 severity_score += 0.15
+            
             contrast = features.get('contrast', 50)
             if contrast > 80:
                 severity_score += 0.15

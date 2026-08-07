@@ -318,7 +318,7 @@ def _build_profile_aware_eligibility_response(results, query, user_profile=None)
     
     return clean_emoji(f"""{profile_intro}{chr(10).join(schemes)}
 
-Next Steps:
+*Next Steps:*
 1. Review the eligibility criteria carefully
 2. Check if you meet all requirements
 3. Prepare the required documents
@@ -361,7 +361,7 @@ def _build_profile_aware_recommendation_response(results, query, user_profile=No
     
     return clean_emoji(f"""{profile_intro}{chr(10).join(schemes)}
 
-To apply for these schemes:
+*To apply for these schemes:*
 1. Visit the official government portal
 2. Check detailed eligibility requirements
 3. Gather required documents
@@ -389,25 +389,25 @@ def _build_scheme_details_response(results, query, user_profile=None):
         match_indicator = f" [This scheme matches your {', '.join(profile_matches)}]"
     
     return clean_emoji(f"""
-[INFO] {scheme_name}
+# {scheme_name}
 
-About the Scheme:
+*About the Scheme:*
 {details}
 
-Benefits:
+*Benefits:*
 {benefits}
 
-Eligibility Criteria:
+*Eligibility Criteria:*
 {eligibility}
 
-Application Process:
+*Application Process:*
 {application}
 
-Required Documents:
+*Required Documents:*
 {documents}
 
-Category: {category}
-Level: {level}
+*Category:* {category}
+*Level:* {level}
 
 Would you like more details about any specific aspect of this scheme?
 """)
@@ -552,3 +552,140 @@ def generate_response(query, results, history=None, user_profile=None):
         })
 
     return response
+
+def _build_follow_up_response(results, query, user_profile=None, referenced_scheme=None, referenced_intent=None):
+    """Build response for follow-up questions about specific schemes"""
+    
+    if not results:
+        return "I don't see that scheme in our database. Could you please specify which scheme you're asking about?"
+    
+    top = results[0]['scheme']
+    
+    scheme_name = get_scheme_attr(top, 'scheme_name', 'N/A')
+    details = get_scheme_attr(top, 'details', 'Not specified')
+    benefits = get_scheme_attr(top, 'benefits', 'Not specified')
+    eligibility = get_scheme_attr(top, 'eligibility', 'Not specified')
+    application = get_scheme_attr(top, 'application', 'Not specified')
+    documents = get_scheme_attr(top, 'documents', 'Not specified')
+    category = get_scheme_attr(top, 'schemeCategory', 'N/A')
+    level = get_scheme_attr(top, 'level', 'N/A')
+    
+    # ============================================================
+    # USE DETECTED INTENT FIRST, THEN FALLBACK TO KEYWORD CHECK
+    # ============================================================
+    intent = referenced_intent or ''
+    query_lower = query.lower()
+    
+    # Prioritize the detected intent from follow-up context
+    if intent == 'APPLICATION':
+        return clean_emoji(f"""
+**Application Process for {scheme_name}**
+
+*Step-by-Step Guide:*
+{application if application else 'Information not available in the database.'}
+
+*Required Documents:*
+{documents if documents else 'Information not available in the database.'}
+
+*Important Tips:*
+- Apply before the deadline
+- Keep all documents ready in digital format
+- Double-check all information before submission
+- Save your application reference number
+
+Need more help with the application process?
+""")
+    
+    elif intent == 'ELIGIBILITY':
+        return clean_emoji(f"""
+**Eligibility Criteria for {scheme_name}**
+
+{eligibility if eligibility else 'Information not available in the database.'}
+
+*Additional Details:*
+- Category: {category}
+- Level: {level}
+
+Check if you meet all requirements before applying.
+Would you like to know about the application process?
+""")
+    
+    elif intent == 'BENEFITS':
+        return clean_emoji(f"""
+**Benefits of {scheme_name}**
+
+{benefits if benefits else 'Information not available in the database.'}
+
+Any specific aspect you'd like me to elaborate on?
+""")
+    
+    # ============================================================
+    # FALLBACK: Check keywords in query
+    # ============================================================
+    elif "apply" in query_lower or "application" in query_lower or "process" in query_lower:
+        return clean_emoji(f"""
+**Application Process for {scheme_name}**
+
+*Step-by-Step Guide:*
+{application if application else 'Information not available in the database.'}
+
+*Required Documents:*
+{documents if documents else 'Information not available in the database.'}
+
+*Important Tips:*
+- Apply before the deadline
+- Keep all documents ready in digital format
+- Double-check all information before submission
+- Save your application reference number
+
+Need more help with the application process?
+""")
+    
+    elif "eligibility" in query_lower or "eligible" in query_lower or "qualify" in query_lower:
+        return clean_emoji(f"""
+**Eligibility Criteria for {scheme_name}**
+
+{eligibility if eligibility else 'Information not available in the database.'}
+
+*Additional Details:*
+- Category: {category}
+- Level: {level}
+
+Check if you meet all requirements before applying.
+Would you like to know about the application process?
+""")
+    
+    elif "benefit" in query_lower or "benefits" in query_lower or "amount" in query_lower:
+        return clean_emoji(f"""
+**Benefits of {scheme_name}**
+
+{benefits if benefits else 'Information not available in the database.'}
+
+Any specific aspect you'd like me to elaborate on?
+""")
+    
+    else:
+        # General details
+        return clean_emoji(f"""
+# **{scheme_name}**
+
+*About:*
+{details}
+
+*Benefits:*
+{benefits}
+
+*Eligibility:*
+{eligibility}
+
+*Application Process:*
+{application}
+
+*Required Documents:*
+{documents}
+
+*Category:* {category}
+*Level:* {level}
+
+Would you like more details about any specific aspect?
+""")
